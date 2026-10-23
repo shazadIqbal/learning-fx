@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mls.learningfx.controller.LoginController">
+   <children>
+      <HBox layoutX="142.0" layoutY="24.0" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome To POS" textAlignment="CENTER" wrappingWidth="327.35107421875">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
+      <GridPane layoutX="108.0" layoutY="104.0" prefHeight="192.0" prefWidth="384.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="187.0" minWidth="10.0" prefWidth="116.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="10.0" prefWidth="268.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="username" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="password" GridPane.rowIndex="1" />
+            <TextField fx:id="username" GridPane.columnIndex="1" />
+            <TextField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" onAction="#sayLogin" prefHeight="25.0" prefWidth="182.0" text="Login" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>
