@@ -2,6 +2,7 @@ module com.mls.learningfx {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires static lombok;
 
 
     opens com.mls.learningfx to javafx.fxml;
