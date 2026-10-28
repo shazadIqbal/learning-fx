@@ -6,21 +6,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserRepository  {
+public class UserRepository extends BaseRepository {
 
-
-    private Connection getConnection(){
-        try {
-            return DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/learning",
-                    "postgres",
-                    "root"
-            );
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
 
     public List<User> getAllUsers(){
         List<User> userList = new ArrayList<>();
@@ -51,19 +38,18 @@ public class UserRepository  {
         String sql = "select * from app_user where email = ? and password = ?";
 
         try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setObject(1,email);
-            ps.setObject(2,password);
 
-            ResultSet rs = ps.executeQuery();
+            ResultSet rs = executeQuery(connection,sql,email,password);
             while (rs.next()){
-                return new User(
-                        (long) rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("contact"),
-                        rs.getString("email"),
-                        rs.getString("password")
-                );
+                return
+                        User.builder()
+                                .id((long) rs.getInt("id"))
+                                .name(rs.getString("name"))
+                                .contact( rs.getString("contact"))
+                                .email(rs.getString("email"))
+                                .build();
+
+
             }
 
         } catch (SQLException e) {

@@ -22,6 +22,8 @@ public class LoginController {
 
     @FXML
     public void sayLogin(){
+
+
         System.out.println(username.getText());
         System.out.println(password.getText());
 
@@ -34,4 +36,8 @@ public class LoginController {
         }
 
     }
+
+
+
+
 }
