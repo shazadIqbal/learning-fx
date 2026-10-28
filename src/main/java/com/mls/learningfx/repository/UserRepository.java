@@ -41,8 +41,7 @@ public class UserRepository extends BaseRepository {
 
             ResultSet rs = executeQuery(connection,sql,email,password);
             while (rs.next()){
-                return
-                        User.builder()
+                return User.builder()
                                 .id((long) rs.getInt("id"))
                                 .name(rs.getString("name"))
                                 .contact( rs.getString("contact"))

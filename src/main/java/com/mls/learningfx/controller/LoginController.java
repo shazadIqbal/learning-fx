@@ -1,14 +1,14 @@
 package com.mls.learningfx.controller;
 
-import com.mls.learningfx.model.User;
-import com.mls.learningfx.repository.UserRepository;
+import com.mls.learningfx.service.UserService;
+import com.mls.learningfx.util.NavigationUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
-import org.w3c.dom.Text;
+import javafx.stage.Stage;
 
-import java.util.List;
+import java.io.IOException;
 
 public class LoginController {
     @FXML
@@ -18,19 +18,22 @@ public class LoginController {
     @FXML
     private Label errorLabel;
 
-    private final UserRepository userRepository = new UserRepository();
+    private final UserService userService = new UserService();
 
     @FXML
     public void sayLogin(){
 
+        Boolean userFound = userService.login(username.getText(),password.getText());
 
-        System.out.println(username.getText());
-        System.out.println(password.getText());
-
-        User user = userRepository.login(username.getText(),password.getText());
-        if(user != null){
+        if(userFound){
             errorLabel.setText("Login successfull");
             errorLabel.setTextFill(Paint.valueOf("Green"));
+            try {
+                Stage stage = (Stage) username.getScene().getWindow();
+                NavigationUtil.navigate(stage, NavigationUtil.DASHBOARD);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }else{
             errorLabel.setText("invalid credentails");
         }

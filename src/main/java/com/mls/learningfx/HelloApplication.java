@@ -16,7 +16,7 @@ public class HelloApplication extends Application {
                 .getResource("login-view.fxml"));
 
         // scene with ui (fxml)
-        Scene scene = new Scene(fxmlLoader.load(), 520, 540);
+        Scene scene = new Scene(fxmlLoader.load(), 600, 600);
         // stage title
         stage.setTitle("Stepway!");
         // set the scean into stage
