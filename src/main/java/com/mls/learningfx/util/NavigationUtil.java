@@ -11,6 +11,7 @@ public class NavigationUtil {
 
 
     public static final String DASHBOARD = "DASHBOARD";
+    public static final String PRODUCT_VIEW = "PRODUCT_VIEW";
 
 
     public static void navigate(Stage stage,String action) throws IOException {
@@ -19,16 +20,24 @@ public class NavigationUtil {
         switch (action){
 
             case DASHBOARD:
-                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class
-                        .getResource("dashboard-view.fxml"));
-
-                // scene with ui (fxml)
-                Scene scene = new Scene(fxmlLoader.load(), 600, 600);
-                stage.setScene(scene);
-                stage.show();
+                loadView(stage,"dashboard-view.fxml");
+                break;
+                
+            case PRODUCT_VIEW:
+                loadView(stage,"product-view.fxml");
                 break;
 
 
         }
+    }
+
+    private static void loadView(Stage stage,String path) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class
+                .getResource(path));
+
+        // scene with ui (fxml)
+        Scene scene = new Scene(fxmlLoader.load(), 600, 600);
+        stage.setScene(scene);
+        stage.show();
     }
 }

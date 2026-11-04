@@ -24,7 +24,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" prefHeight="102.0" prefWidth="185.0" text="Product" textAlignment="CENTER">
+            <Button fx:id="productBtn" mnemonicParsing="false" onAction="#productView" prefHeight="102.0" prefWidth="185.0" text="Product" textAlignment="CENTER">
                <padding>
                   <Insets top="60.0" />
                </padding></Button>

@@ -1,6 +1,7 @@
 package com.mls.learningfx.repository;
 
 import java.sql.*;
+import java.util.List;
 
 public abstract class BaseRepository {
 
@@ -15,7 +16,7 @@ public abstract class BaseRepository {
         try {
 
             return DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/learning",
+                    "jdbc:postgresql://localhost:5432/inventory",
                     "postgres",
                     "root");
 

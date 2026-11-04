@@ -13,7 +13,7 @@ public class UserRepository extends BaseRepository {
         List<User> userList = new ArrayList<>();
         Connection connection = getConnection();
 
-        String sql = "select * from app_user";
+        String sql = "select * from users";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -35,7 +35,7 @@ public class UserRepository extends BaseRepository {
     public User login(String email,String password){
         Connection connection = getConnection();
 
-        String sql = "select * from app_user where email = ? and password = ?";
+        String sql = "select * from users where email = ? and password = ?";
 
         try {
 
@@ -58,5 +58,6 @@ public class UserRepository extends BaseRepository {
         return null;
 
     }
+
 
 }
