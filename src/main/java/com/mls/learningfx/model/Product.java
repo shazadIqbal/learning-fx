@@ -21,5 +21,6 @@ public class Product {
 
     private String categoryName;
     private String createdByName;
+    private Integer quantity;
 
 }

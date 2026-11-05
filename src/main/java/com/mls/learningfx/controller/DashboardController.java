@@ -11,7 +11,6 @@ import static com.mls.learningfx.util.NavigationUtil.*;
 
 public class DashboardController {
 
-
     @FXML
     private Button productBtn;
     @FXML

@@ -13,10 +13,12 @@ public class ProductRepository extends BaseRepository {
 
     public List<Product> getAllProducts() {
         String sql = "SELECT p.*, c.name AS category_name, " +
-                "u.name AS created_by_name " +
+                "u.name AS created_by_name, " +
+                "s.qty AS quantity " +
                 "FROM product p " +
                 "LEFT JOIN product_category c ON p.category_id = c.id " +
                 "LEFT JOIN users u ON p.created_by = u.id " +
+                "LEFT JOIN stock s on s.product_id = p.id "+
                 "ORDER BY p.id";
 
         return loadProducts(sql, null);
@@ -104,6 +106,7 @@ public class ProductRepository extends BaseRepository {
                             .createdBy((Integer) rs.getObject("created_by"))
                             .categoryName(rs.getString("category_name"))
                             .createdByName(rs.getString("created_by_name"))
+                            .quantity(rs.getInt("quantity"))
                             .build();
 
                     list.add(product);
