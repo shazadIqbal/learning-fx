@@ -3,10 +3,12 @@ module com.mls.learningfx {
     requires javafx.fxml;
     requires java.sql;
     requires static lombok;
+    requires javafx.graphics;
 
 
     opens com.mls.learningfx to javafx.fxml;
     exports com.mls.learningfx;
     exports com.mls.learningfx.controller;
     opens com.mls.learningfx.controller to javafx.fxml;
+    opens com.mls.learningfx.model to javafx.base;
 }

@@ -28,7 +28,7 @@
                <padding>
                   <Insets top="60.0" />
                </padding></Button>
-            <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="172.0" text="Supplier" GridPane.columnIndex="1">
+            <Button fx:id="supplierBtn" mnemonicParsing="false" onAction="#supplierView" prefHeight="100.0" prefWidth="172.0" text="Supplier" GridPane.columnIndex="1">
                <padding>
                   <Insets top="60.0" />
                </padding></Button>
