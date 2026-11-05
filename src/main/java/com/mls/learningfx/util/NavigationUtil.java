@@ -13,7 +13,7 @@ public class NavigationUtil {
     public static final String DASHBOARD = "DASHBOARD";
     public static final String PRODUCT_VIEW = "PRODUCT_VIEW";
     public static final String SUPPLIER_VIEW = "SUPPLIER_VIEW";
-
+    public static final String SALE_VIEW = "SALE_VIEW";
 
     public static void navigate(Stage stage,String action) throws IOException {
 
@@ -28,7 +28,10 @@ public class NavigationUtil {
                 break;
             case SUPPLIER_VIEW:
                 loadView(stage, "supplier-view.fxml");
-
+                break;
+            case SALE_VIEW:
+                loadView(stage,"sale-view.fxml");
+                break;
 
         }
     }

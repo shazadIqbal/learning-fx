@@ -7,8 +7,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-import static com.mls.learningfx.util.NavigationUtil.PRODUCT_VIEW;
-import static com.mls.learningfx.util.NavigationUtil.SUPPLIER_VIEW;
+import static com.mls.learningfx.util.NavigationUtil.*;
 
 public class DashboardController {
 
@@ -37,5 +36,15 @@ public class DashboardController {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @FXML
+    public void onSaleClick(){
+        Stage stage = (Stage) productBtn.getScene().getWindow();
+        try {
+            NavigationUtil.navigate(stage,SALE_VIEW);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

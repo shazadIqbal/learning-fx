@@ -43,6 +43,7 @@ CREATE TABLE product (
                          id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                          name VARCHAR(150) NOT NULL,
                          category_id INTEGER,
+                         barcode varchar(100),
                          price NUMERIC(12, 2) NOT NULL CHECK (price >= 0),
                          sell_price NUMERIC(12, 2) NOT NULL CHECK (sell_price >= 0),
                          created_by INTEGER,
