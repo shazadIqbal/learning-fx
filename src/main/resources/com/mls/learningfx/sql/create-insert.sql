@@ -2,8 +2,8 @@ CREATE TABLE users (
                        id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                        name VARCHAR(100) NOT NULL,
                        contact VARCHAR(20),
-                       email VARCHAR(150) unique
-                           password varchar(150) not null
+                       email VARCHAR(150) unique,
+                       password varchar(150) not null
 );
 
 

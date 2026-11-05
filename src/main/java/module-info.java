@@ -9,4 +9,6 @@ module com.mls.learningfx {
     exports com.mls.learningfx;
     exports com.mls.learningfx.controller;
     opens com.mls.learningfx.controller to javafx.fxml;
+
+    opens com.mls.learningfx.model to javafx.base;
 }
