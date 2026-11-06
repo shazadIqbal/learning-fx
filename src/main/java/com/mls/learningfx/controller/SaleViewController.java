@@ -117,7 +117,6 @@ public class SaleViewController {
         );
 
 
-
         getAllProducts();
 
 //        searchField.textProperty().addListener(
@@ -125,7 +124,6 @@ public class SaleViewController {
 //        );
 
         barCodeScan();
-
 
     }
 
@@ -189,7 +187,13 @@ public class SaleViewController {
         if (event.getClickCount() != 2) {
             return;
         }
+
         Product product = productTable.getSelectionModel().getSelectedItem();
+
+        if (product == null) {
+            return;
+        }
+
         TextInputDialog dialog = new TextInputDialog();
 
         dialog.setTitle("Quantity ");
@@ -198,24 +202,75 @@ public class SaleViewController {
 
         dialog.showAndWait().ifPresent(qty -> {
 
-            Integer inputQty = Integer.parseInt(qty);
-            //its product stock
-            if(product.getQuantity() > inputQty){
+            try {
 
+                Integer inputQty = Integer.parseInt(qty.trim());
+
+                if (inputQty <= 0) {
+                    new Alert(Alert.AlertType.WARNING,
+                            "Please enter a quantity greater than 0.")
+                            .showAndWait();
+                    return;
+                }
+
+                // Check if product already exists
+                for (Item item : itemObservableList) {
+
+                    if (item.getName().equals(product.getName())) {
+
+                        int newQuantity = item.getQuantity() + inputQty;
+
+                        // Check available stock
+                        if (newQuantity > product.getQuantity()) {
+
+                            new Alert(Alert.AlertType.WARNING,
+                                    "Not enough stock available.")
+                                    .showAndWait();
+                            return;
+                        }
+
+                        // Update existing item
+                        item.setQuantity(newQuantity);
+
+                        item.setSubTotal(
+                                newQuantity * product.getSellPrice()
+                        );
+
+                        selectedItemsTable.refresh();
+
+                        return;
+                    }
+                }
+
+                // Check stock for a new item
+                if (inputQty > product.getQuantity()) {
+
+                    new Alert(Alert.AlertType.WARNING,
+                            "Not enough stock available.")
+                            .showAndWait();
+                    return;
+                }
+
+                // Add new item if it does not exist
                 Item item = Item.builder()
                         .name(product.getName())
                         .price(product.getSellPrice())
                         .quantity(inputQty)
                         .subTotal(inputQty * product.getSellPrice())
                         .build();
+
                 itemObservableList.add(item);
 
+                selectedItemsTable.setItems(itemObservableList);
+
+            } catch (NumberFormatException e) {
+
+                new Alert(Alert.AlertType.WARNING,
+                        "Please enter a valid quantity.")
+                        .showAndWait();
             }
 
-            selectedItemsTable.setItems(itemObservableList);
-
         });
-
 
     }
 
@@ -233,6 +288,4 @@ public class SaleViewController {
     private void handleCheckout(ActionEvent event) {
 
     }
-
-
 }
