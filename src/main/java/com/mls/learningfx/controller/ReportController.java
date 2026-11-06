@@ -1,10 +1,15 @@
 
 package com.mls.learningfx.controller;
 
+import com.mls.learningfx.util.NavigationUtil;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class ReportController {
 
@@ -13,6 +18,9 @@ public class ReportController {
 
     @FXML
     private PieChart pieChart;
+
+    @FXML
+    private Button goBack;
 
     @FXML
     public void initialize() {
@@ -39,5 +47,26 @@ public class ReportController {
         pieChart.getData().add(new PieChart.Data("Headphones", 90));
 
         pieChart.setTitle("Product Sales");
+
     }
+
+    @FXML
+    private void goBack() {
+
+        Stage stage =
+                (Stage) reportChart.getScene().getWindow();
+
+        try {
+
+            NavigationUtil.navigate(
+                    stage,
+                    NavigationUtil.DASHBOARD
+            );
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+    }
+
 }
