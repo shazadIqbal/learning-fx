@@ -31,6 +31,7 @@ public class NavigationUtil {
                 break;
             case SALE_VIEW:
                 loadView(stage,"sale-view.fxml");
+                stage.setMaximized(true);
                 break;
 
         }
@@ -39,6 +40,7 @@ public class NavigationUtil {
     private static void loadView(Stage stage,String path) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class
                 .getResource(path));
+        stage.setMaximized(false);
 
         // scene with ui (fxml)
         Scene scene = new Scene(fxmlLoader.load(), 600, 600);

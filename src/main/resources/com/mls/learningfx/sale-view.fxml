@@ -59,7 +59,7 @@
                         <TableColumn fx:id="productCategoryColumn" prefWidth="117.0" text="Category" />
 
                         <TableColumn fx:id="productPriceColumn" prefWidth="116.0" text="Price" />
-                  <TableColumn fx:id="productStockColumn" prefWidth="75.0" text="Stock" />
+                        <TableColumn fx:id="productStockColumn" prefWidth="75.0" text="Stock" />
 
                     </columns>
 
@@ -134,6 +134,8 @@
             <HBox alignment="CENTER_RIGHT" spacing="12">
 
                 <Button fx:id="backButton" onAction="#handleBack" prefHeight="45" prefWidth="130" style="-fx-background-color: #64748b;                                -fx-text-fill: white;                                -fx-font-size: 14px;                                -fx-background-radius: 6;" text="Back" />
+
+                <Button fx:id="reportButton" onAction="#handleReport" prefHeight="45" prefWidth="130" style="-fx-background-color: #2563eb;                                -fx-text-fill: white;                                -fx-font-size: 14px;                                -fx-font-weight: bold;                                -fx-background-radius: 6;" text="Report" />
 
                 <Button fx:id="checkoutButton" onAction="#handleCheckout" prefHeight="45" prefWidth="170" style="-fx-background-color: #16a34a;                                -fx-text-fill: white;                                -fx-font-size: 15px;                                -fx-font-weight: bold;                                -fx-background-radius: 6;" text="Checkout" />
 

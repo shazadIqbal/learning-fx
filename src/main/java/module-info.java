@@ -5,6 +5,10 @@ module com.mls.learningfx {
     requires static lombok;
     requires javafx.graphics;
 
+    // PDF report
+    requires com.github.librepdf.openpdf;
+    requires java.desktop;   // OpenPDF uses java.awt.Color
+
 
     opens com.mls.learningfx to javafx.fxml;
     exports com.mls.learningfx;

@@ -3,6 +3,7 @@ package com.mls.learningfx.controller;
 import com.mls.learningfx.model.Item;
 import com.mls.learningfx.model.Product;
 import com.mls.learningfx.service.ProductService;
+import com.mls.learningfx.service.SaleReportService;
 import com.mls.learningfx.util.NavigationUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import static com.mls.learningfx.util.NavigationUtil.DASHBOARD;
 import static com.mls.learningfx.util.NavigationUtil.PRODUCT_VIEW;
@@ -60,6 +62,7 @@ public class SaleViewController {
 
 
     private final ProductService productService = new ProductService();
+    private final SaleReportService saleReportService = new SaleReportService();
 
     ObservableList<Item> itemObservableList = FXCollections.observableArrayList();
 
@@ -138,7 +141,7 @@ public class SaleViewController {
         TextInputDialog dialog = new TextInputDialog();
 
         dialog.setTitle("Quantity ");
-       // dialog.setHeaderText("Enter Quantity");
+        // dialog.setHeaderText("Enter Quantity");
         dialog.setContentText("Enter Quantity :");
 
         dialog.showAndWait().ifPresent(qty -> {
@@ -177,5 +180,32 @@ public class SaleViewController {
     @FXML
     private void handleCheckout(ActionEvent event) {
 
+    }
+
+    @FXML
+    private void handleReport(ActionEvent event) {
+
+        if (itemObservableList.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "No Items",
+                    "Add at least one item to the sale before creating a report.");
+            return;
+        }
+
+        try {
+            Path pdfPath = saleReportService.generateSaleReport(itemObservableList);
+            showAlert(Alert.AlertType.INFORMATION, "Report Created",
+                    "PDF saved to:\n" + pdfPath);
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Report Failed",
+                    "Could not create PDF: " + e.getMessage());
+        }
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
