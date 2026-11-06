@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mls.learningfx.controller.ReportController">
+
+    <children>
+
+        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="700.0">
+            <children>
+                <Label text="REPORTS">
+                    <font>
+                        <Font size="36.0" />
+                    </font>
+                </Label>
+            </children>
+        </HBox>
+
+        <BarChart fx:id="reportChart" layoutY="224.0" prefHeight="276.0" prefWidth="371.0">
+
+            <xAxis>
+                <CategoryAxis label="Products" />
+            </xAxis>
+
+            <yAxis>
+                <NumberAxis label="Quantity" />
+            </yAxis>
+
+        </BarChart>
+        <PieChart fx:id="pieChart" layoutX="387.0" layoutY="224.0" prefHeight="263.0" prefWidth="313.0" />
+
+    </children>
+</AnchorPane>
