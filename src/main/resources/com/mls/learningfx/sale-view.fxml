@@ -47,6 +47,11 @@
             <VBox spacing="10" VBox.vgrow="ALWAYS">
 
                 <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="Available Products" />
+            <HBox alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="652.0">
+               <children>
+                  <TextField fx:id="barcodeTextField" promptText="BarCode" />
+               </children>
+            </HBox>
 
                 <TableView fx:id="productTable" onMouseClicked="#handleProductClick" VBox.vgrow="ALWAYS">
 

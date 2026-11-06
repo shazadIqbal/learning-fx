@@ -5,6 +5,7 @@ import com.mls.learningfx.model.Item;
 import com.mls.learningfx.model.Product;
 import com.mls.learningfx.service.ProductService;
 import com.mls.learningfx.util.NavigationUtil;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
@@ -62,6 +64,9 @@ public class SaleViewController {
 
     @FXML
     public TextField searchField;
+
+    @FXML
+    public TextField barcodeTextField;
 
 
     private final ProductService productService = new ProductService();
@@ -115,11 +120,44 @@ public class SaleViewController {
 
         getAllProducts();
 
-        searchField.textProperty().addListener(
-                (observable, oldValue, newValue) -> handleSearch()
-        );
+//        searchField.textProperty().addListener(
+//                (observable, oldValue, newValue) -> handleSearch()
+//        );
+
+        barCodeScan();
 
 
+    }
+
+    private void barCodeScan() {
+        PauseTransition pause = new PauseTransition(Duration.millis(200));
+
+        barcodeTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+
+            pause.setOnFinished(event -> {
+
+                String barcode = barcodeTextField.getText().trim();
+
+                if (!barcode.isEmpty()) {
+                    System.out.println(barcode);
+                    Product product = productTable.getItems().stream()
+                            .filter(p->p.getBarcode().equalsIgnoreCase(barcode))
+                            .findFirst().orElse(null);
+
+
+                    // Process scanned barcode
+                    //searchProductByBarcode(barcode);
+
+                    // Clear TextField
+                    //barcodeTextField.clear();
+
+                    // Focus again
+                    //barcodeTextField.requestFocus();
+                }
+            });
+
+            pause.playFromStart();
+        });
     }
 
 
@@ -195,4 +233,6 @@ public class SaleViewController {
     private void handleCheckout(ActionEvent event) {
 
     }
+
+
 }
