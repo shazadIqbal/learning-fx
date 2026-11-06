@@ -1,3 +1,4 @@
+
 package com.mls.learningfx.controller;
 
 import com.mls.learningfx.model.Item;
@@ -45,10 +46,14 @@ public class SaleViewController {
     private TableColumn<Product, String> productNameColumn;
 
     @FXML
+    private TableColumn<Product, String> productBarcodeColumn;
+
+    @FXML
     private TableColumn<Product, String> productCategoryColumn;
 
     @FXML
     private TableColumn<Product, Double> productPriceColumn;
+
     @FXML
     private TableColumn<Product, Integer> productStockColumn;
 
@@ -74,6 +79,10 @@ public class SaleViewController {
                 new PropertyValueFactory<>("name")
         );
 
+        productBarcodeColumn.setCellValueFactory(
+                new PropertyValueFactory<>("barcode")
+        );
+
         productCategoryColumn.setCellValueFactory(
                 new PropertyValueFactory<>("categoryName")
         );
@@ -81,6 +90,7 @@ public class SaleViewController {
         productPriceColumn.setCellValueFactory(
                 new PropertyValueFactory<>("sellPrice")
         );
+
         productStockColumn.setCellValueFactory(
                 new PropertyValueFactory<>("quantity")
         );
@@ -92,15 +102,22 @@ public class SaleViewController {
         quantityColumn.setCellValueFactory(
                 new PropertyValueFactory<>("quantity")
         );
+
         priceColumn.setCellValueFactory(
                 new PropertyValueFactory<>("price")
         );
+
         subTotalColumn.setCellValueFactory(
                 new PropertyValueFactory<>("subTotal")
         );
 
 
+
         getAllProducts();
+
+        searchField.textProperty().addListener(
+                (observable, oldValue, newValue) -> handleSearch()
+        );
 
 
     }
@@ -138,12 +155,12 @@ public class SaleViewController {
         TextInputDialog dialog = new TextInputDialog();
 
         dialog.setTitle("Quantity ");
-       // dialog.setHeaderText("Enter Quantity");
+        // dialog.setHeaderText("Enter Quantity");
         dialog.setContentText("Enter Quantity :");
 
         dialog.showAndWait().ifPresent(qty -> {
 
-            Integer inputQty =  Integer.parseInt(qty);
+            Integer inputQty = Integer.parseInt(qty);
             //its product stock
             if(product.getQuantity() > inputQty){
 

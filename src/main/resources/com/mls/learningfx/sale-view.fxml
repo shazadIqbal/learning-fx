@@ -22,13 +22,13 @@
                 <Insets bottom="15" left="25" right="25" top="20" />
             </padding>
 
-            <Label style="-fx-font-size: 25px;                           -fx-font-weight: bold;" text="Create New Sale" />
+            <Label style="-fx-font-size: 25px; -fx-font-weight: bold;" text="Create New Sale" />
 
             <HBox alignment="CENTER_LEFT" spacing="10">
 
                 <TextField fx:id="searchField" prefHeight="42" promptText="Search product by name or barcode..." style="-fx-background-radius: 6;" HBox.hgrow="ALWAYS" />
 
-                <Button fx:id="searchButton" onAction="#handleSearch" prefHeight="42" prefWidth="100" style="-fx-background-color: #2563eb;                                -fx-text-fill: white;                                -fx-font-weight: bold;                                -fx-background-radius: 6;" text="Search" />
+                <Button fx:id="searchButton" onAction="#handleSearch" prefHeight="42" prefWidth="100" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Search" />
 
             </HBox>
         </VBox>
@@ -46,7 +46,7 @@
             <!-- AVAILABLE PRODUCTS -->
             <VBox spacing="10" VBox.vgrow="ALWAYS">
 
-                <Label style="-fx-font-size: 17px;                               -fx-font-weight: bold;" text="Available Products" />
+                <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="Available Products" />
 
                 <TableView fx:id="productTable" onMouseClicked="#handleProductClick" VBox.vgrow="ALWAYS">
 
@@ -54,18 +54,21 @@
 
                         <TableColumn fx:id="productIdColumn" prefWidth="45" text="ID" />
 
-                        <TableColumn fx:id="productNameColumn" prefWidth="277.0" text="Product Name" />
+                        <TableColumn fx:id="productNameColumn" prefWidth="160" text="Product Name" />
 
-                        <TableColumn fx:id="productCategoryColumn" prefWidth="117.0" text="Category" />
+                        <TableColumn fx:id="productBarcodeColumn" prefWidth="125" text="Barcode" />
 
-                        <TableColumn fx:id="productPriceColumn" prefWidth="116.0" text="Price" />
-                  <TableColumn fx:id="productStockColumn" prefWidth="75.0" text="Stock" />
+                        <TableColumn fx:id="productCategoryColumn" prefWidth="110" text="Category" />
+
+                        <TableColumn fx:id="productPriceColumn" prefWidth="110" text="Price" />
+
+                        <TableColumn fx:id="productStockColumn" prefWidth="75" text="Stock" />
 
                     </columns>
 
                 </TableView>
 
-                <Label style="-fx-text-fill: #64748b;                               -fx-font-size: 11px;" text="Double-click a product to add it to the sale." />
+                <Label style="-fx-text-fill: #64748b; -fx-font-size: 11px;" text="Double-click a product to add it to the sale." />
 
             </VBox>
 
@@ -78,7 +81,7 @@
 
                 <HBox alignment="CENTER_LEFT">
 
-                    <Label style="-fx-font-size: 17px;                                   -fx-font-weight: bold;" text="Selected Items" />
+                    <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="Selected Items" />
 
                     <Region HBox.hgrow="ALWAYS" />
 
@@ -123,9 +126,9 @@
             <!-- GRAND TOTAL -->
             <HBox alignment="CENTER_RIGHT" spacing="15">
 
-                <Label style="-fx-font-size: 20px;                               -fx-font-weight: bold;" text="GRAND TOTAL" />
+                <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="GRAND TOTAL" />
 
-                <Label fx:id="grandTotalLabel" style="-fx-font-size: 26px;                               -fx-font-weight: bold;                               -fx-text-fill: #16a34a;" text="Rs. 0.00" />
+                <Label fx:id="grandTotalLabel" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #16a34a;" text="Rs. 0.00" />
 
             </HBox>
 
@@ -133,9 +136,9 @@
             <!-- ACTION BUTTONS -->
             <HBox alignment="CENTER_RIGHT" spacing="12">
 
-                <Button fx:id="backButton" onAction="#handleBack" prefHeight="45" prefWidth="130" style="-fx-background-color: #64748b;                                -fx-text-fill: white;                                -fx-font-size: 14px;                                -fx-background-radius: 6;" text="Back" />
+                <Button fx:id="backButton" onAction="#handleBack" prefHeight="45" prefWidth="130" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 6;" text="Back" />
 
-                <Button fx:id="checkoutButton" onAction="#handleCheckout" prefHeight="45" prefWidth="170" style="-fx-background-color: #16a34a;                                -fx-text-fill: white;                                -fx-font-size: 15px;                                -fx-font-weight: bold;                                -fx-background-radius: 6;" text="Checkout" />
+                <Button fx:id="checkoutButton" onAction="#handleCheckout" prefHeight="45" prefWidth="170" style="-fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 6;" text="Checkout" />
 
             </HBox>
 
