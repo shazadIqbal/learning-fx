@@ -1,6 +1,7 @@
 package com.mls.learningfx.controller;
 
 import com.mls.learningfx.util.NavigationUtil;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -46,4 +47,18 @@ public class DashboardController {
             throw new RuntimeException(e);
         }
     }
+    @FXML
+    private Button logoutBtn;
+
+   @FXML
+    public void logout() {
+       Stage stage = (Stage) logoutBtn.getScene().getWindow();
+       try {
+           NavigationUtil.navigate(stage,NavigationUtil.LOGIN);
+
+       } catch (IOException e) {
+           throw new RuntimeException(e);
+       }
+
+   }
 }

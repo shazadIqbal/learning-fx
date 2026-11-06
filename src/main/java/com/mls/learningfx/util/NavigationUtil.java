@@ -14,6 +14,7 @@ public class NavigationUtil {
     public static final String PRODUCT_VIEW = "PRODUCT_VIEW";
     public static final String SUPPLIER_VIEW = "SUPPLIER_VIEW";
     public static final String SALE_VIEW = "SALE_VIEW";
+    public static final String LOGIN ="LOGIN";
 
     public static void navigate(Stage stage,String action) throws IOException {
 
@@ -32,6 +33,9 @@ public class NavigationUtil {
             case SALE_VIEW:
                 loadView(stage,"sale-view.fxml");
                 stage.setMaximized(true);
+                break;
+            case LOGIN:
+                loadView(stage,"login-view.fxml");
                 break;
 
         }
