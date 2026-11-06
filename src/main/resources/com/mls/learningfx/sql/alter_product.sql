@@ -1,0 +1,2 @@
+ALTER TABLE product
+    ADD COLUMN barcode VARCHAR(100) UNIQUE;
