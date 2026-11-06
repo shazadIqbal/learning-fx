@@ -1,4 +1,3 @@
-
 package com.mls.learningfx.model;
 
 import lombok.AllArgsConstructor;
@@ -22,5 +21,6 @@ public class Product {
     private String categoryName;
     private String createdByName;
     private Integer quantity;
+    private String barcode;
 
 }

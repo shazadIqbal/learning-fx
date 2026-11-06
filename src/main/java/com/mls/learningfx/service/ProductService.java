@@ -31,19 +31,19 @@ public class ProductService {
 
     public boolean addProduct(String name, Integer categoryId,
                               Double price, Double sellPrice,
-                              Integer createdBy) {
+                              Integer createdBy, String barcode) {
 
         return productRepository.addProduct(
-                name, categoryId, price, sellPrice, createdBy
+                name, categoryId, price, sellPrice, createdBy, barcode
         );
     }
 
     public boolean updateProduct(int id, String name,
                                  Integer categoryId, Double price,
-                                 Double sellPrice, Integer createdBy) {
+                                 Double sellPrice, String barcode) {
 
         return productRepository.updateProduct(
-                id, name, categoryId, price, sellPrice, createdBy
+                id, name, categoryId, price, sellPrice, barcode
         );
     }
 

@@ -1,10 +1,9 @@
-
 package com.mls.learningfx.controller;
 
 import com.mls.learningfx.model.Product;
 import com.mls.learningfx.service.ProductService;
+import com.mls.learningfx.service.UserService;
 import com.mls.learningfx.util.NavigationUtil;
-
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -32,6 +31,9 @@ public class ProductViewController {
     private TableColumn<Product, String> nameColumn;
 
     @FXML
+    private TableColumn<Product, String> barcodeColumn;
+
+    @FXML
     private TableColumn<Product, String> categoryColumn;
 
     @FXML
@@ -48,6 +50,9 @@ public class ProductViewController {
 
     @FXML
     private TextField searchField;
+
+    @FXML
+    private TextField barcodeField;
 
     @FXML
     private Button backButton;
@@ -67,6 +72,10 @@ public class ProductViewController {
 
         nameColumn.setCellValueFactory(
                 new PropertyValueFactory<>("name")
+        );
+
+        barcodeColumn.setCellValueFactory(
+                new PropertyValueFactory<>("barcode")
         );
 
         categoryColumn.setCellValueFactory(
@@ -96,6 +105,10 @@ public class ProductViewController {
         searchField.textProperty().addListener(
                 (observable, oldValue, newValue) -> searchProducts()
         );
+
+        barcodeField.textProperty().addListener(
+                (observable, oldValue, newValue) -> searchProducts()
+        );
     }
 
 
@@ -112,13 +125,23 @@ public class ProductViewController {
 
         String keyword = searchField.getText();
 
+        ObservableList<Product> result;
+
         if (keyword == null || keyword.trim().isEmpty()) {
-            getAllProducts();
+            result = productService.getAllProducts();
         } else {
-            productTable.setItems(
-                    productService.searchProducts(keyword)
-            );
+            result = productService.searchProducts(keyword);
         }
+
+        String barcode = barcodeField.getText().trim();
+
+        if (!barcode.isEmpty()) {
+            result.removeIf(product -> product.getBarcode() == null
+                    || !product.getBarcode().toLowerCase()
+                    .contains(barcode.toLowerCase()));
+        }
+
+        productTable.setItems(result);
     }
 
 
@@ -226,21 +249,15 @@ public class ProductViewController {
         TextField nameField = new TextField();
         TextField priceField = new TextField();
         TextField sellPriceField = new TextField();
+        TextField barcodeInputField = new TextField();
 
         Map<Integer, String> categories =
                 productService.getAllCategories();
 
-        Map<Integer, String> users =
-                productService.getAllUsers();
-
         ComboBox<Integer> categoryBox =
                 createDropdown(categories);
 
-        ComboBox<Integer> userBox =
-                createDropdown(users);
-
         categoryBox.setPromptText("Select Category");
-        userBox.setPromptText("Select User");
 
         if (isEdit) {
 
@@ -255,7 +272,7 @@ public class ProductViewController {
             );
 
             categoryBox.setValue(product.getCategoryId());
-            userBox.setValue(product.getCreatedBy());
+            barcodeInputField.setText(product.getBarcode());
         }
 
         VBox vbox = new VBox(10);
@@ -276,8 +293,8 @@ public class ProductViewController {
                 new Label("Selling Price"),
                 sellPriceField,
 
-                new Label("Created By"),
-                userBox
+                new Label("Barcode"),
+                barcodeInputField
         );
 
         dialog.getDialogPane().setContent(vbox);
@@ -304,10 +321,14 @@ public class ProductViewController {
             try {
 
                 String name = nameField.getText().trim();
+                String barcode = barcodeInputField.getText().trim();
+
+                if (barcode.isEmpty()) {
+                    barcode = null;
+                }
 
                 if (name.isEmpty()
-                        || categoryBox.getValue() == null
-                        || userBox.getValue() == null) {
+                        || categoryBox.getValue() == null) {
 
                     showError("Please fill in all fields");
                     return;
@@ -340,17 +361,25 @@ public class ProductViewController {
                             categoryBox.getValue(),
                             price,
                             sellPrice,
-                            userBox.getValue()
+                            barcode
                     );
 
                 } else {
+
+                    Integer loggedInUserId = UserService.getLoggedInUserId();
+
+                    if (loggedInUserId == null) {
+                        showError("Please log in before adding products");
+                        return;
+                    }
 
                     saved = productService.addProduct(
                             name,
                             categoryBox.getValue(),
                             price,
                             sellPrice,
-                            userBox.getValue()
+                            loggedInUserId,
+                            barcode
                     );
                 }
 

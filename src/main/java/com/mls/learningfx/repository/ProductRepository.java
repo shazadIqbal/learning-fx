@@ -18,7 +18,7 @@ public class ProductRepository extends BaseRepository {
                 "FROM product p " +
                 "LEFT JOIN product_category c ON p.category_id = c.id " +
                 "LEFT JOIN users u ON p.created_by = u.id " +
-                "LEFT JOIN stock s on s.product_id = p.id "+
+                "LEFT JOIN stock s on s.product_id = p.id " +
                 "ORDER BY p.id";
 
         return loadProducts(sql, null);
@@ -26,28 +26,28 @@ public class ProductRepository extends BaseRepository {
 
     public boolean addProduct(String name, Integer categoryId,
                               Double price, Double sellPrice,
-                              Integer createdBy) {
+                              Integer createdBy, String barcode) {
 
         String sql = "INSERT INTO product " +
-                "(name, category_id, price, sell_price, created_by) " +
-                "VALUES (?, ?, ?, ?, ?)";
+                "(name, category_id, price, sell_price, created_by, barcode) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
 
         int rows = executeUpdate(sql, name, categoryId,
-                price, sellPrice, createdBy);
+                price, sellPrice, createdBy, barcode);
 
         return rows > 0;
     }
 
     public boolean updateProduct(int id, String name,
                                  Integer categoryId, Double price,
-                                 Double sellPrice, Integer createdBy) {
+                                 Double sellPrice, String barcode) {
 
         String sql = "UPDATE product SET name = ?, " +
                 "category_id = ?, price = ?, sell_price = ?, " +
-                "created_by = ? WHERE id = ?";
+                "barcode = ? WHERE id = ?";
 
         int rows = executeUpdate(sql, name, categoryId,
-                price, sellPrice, createdBy, id);
+                price, sellPrice, barcode, id);
 
         return rows > 0;
     }
@@ -68,13 +68,16 @@ public class ProductRepository extends BaseRepository {
         }
 
         String sql = "SELECT p.*, c.name AS category_name, " +
-                "u.name AS created_by_name " +
+                "u.name AS created_by_name, " +
+                "s.qty AS quantity " +
                 "FROM product p " +
                 "LEFT JOIN product_category c ON p.category_id = c.id " +
                 "LEFT JOIN users u ON p.created_by = u.id " +
+                "LEFT JOIN stock s ON s.product_id = p.id " +
                 "WHERE p.name ILIKE ? " +
                 "OR c.name ILIKE ? " +
                 "OR u.name ILIKE ? " +
+                "OR p.barcode ILIKE ? " +
                 "ORDER BY p.id";
 
         return loadProducts(sql, "%" + keyword.trim() + "%");
@@ -91,6 +94,7 @@ public class ProductRepository extends BaseRepository {
                 ps.setString(1, keyword);
                 ps.setString(2, keyword);
                 ps.setString(3, keyword);
+                ps.setString(4, keyword);
             }
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -107,6 +111,7 @@ public class ProductRepository extends BaseRepository {
                             .categoryName(rs.getString("category_name"))
                             .createdByName(rs.getString("created_by_name"))
                             .quantity(rs.getInt("quantity"))
+                            .barcode(rs.getString("barcode"))
                             .build();
 
                     list.add(product);

@@ -43,10 +43,17 @@
             </children>
         </HBox>
 
+        <TextField fx:id="barcodeField"
+                   layoutX="24.0"
+                   layoutY="80.0"
+                   prefWidth="210.0"
+                   prefHeight="28.0"
+                   promptText="Enter or scan barcode..." />
+
         <TableView fx:id="productTable"
                    layoutX="4.0"
-                   layoutY="94.0"
-                   prefHeight="342.0"
+                   layoutY="126.0"
+                   prefHeight="310.0"
                    prefWidth="593.0">
 
             <columns>
@@ -58,6 +65,10 @@
                 <TableColumn fx:id="nameColumn"
                              prefWidth="115.0"
                              text="Name" />
+
+                <TableColumn fx:id="barcodeColumn"
+                             prefWidth="115.0"
+                             text="Barcode" />
 
                 <TableColumn fx:id="categoryColumn"
                              prefWidth="85.0"
