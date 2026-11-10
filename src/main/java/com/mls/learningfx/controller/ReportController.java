@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -19,8 +18,6 @@ public class ReportController {
     @FXML
     private PieChart pieChart;
 
-    @FXML
-    private Button goBack;
 
     @FXML
     public void initialize() {
