@@ -106,6 +106,7 @@
                         <TableColumn fx:id="priceColumn" prefWidth="100" text="Price" />
 
                         <TableColumn fx:id="subTotalColumn" prefWidth="110" text="Subtotal" />
+                  <TableColumn fx:id="actionColumn" prefWidth="215.0" text="Actions" />
 
                     </columns>
 

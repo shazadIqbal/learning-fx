@@ -3,10 +3,12 @@ package com.mls.learningfx.controller;
 
 import com.mls.learningfx.model.Item;
 import com.mls.learningfx.model.Product;
+import com.mls.learningfx.model.Supplier;
 import com.mls.learningfx.service.ProductService;
 import com.mls.learningfx.service.SaleReportService;
 import com.mls.learningfx.util.NavigationUtil;
 import javafx.animation.PauseTransition;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -60,6 +63,9 @@ public class SaleViewController {
 
     @FXML
     private TableColumn<Product, Integer> productStockColumn;
+
+    @FXML
+    private TableColumn<Item, Void> actionColumn;
 
     @FXML
     public Button searchButton;
@@ -120,7 +126,7 @@ public class SaleViewController {
         );
 
 
-
+        addItemActionButtons();
         getAllProducts();
 
 //        searchField.textProperty().addListener(
@@ -131,6 +137,85 @@ public class SaleViewController {
 
 
     }
+
+
+    @FXML
+    private void addItemActionButtons() {
+
+        actionColumn.setCellFactory(column -> new TableCell<Item, Void>() {
+
+            private final Button increaseBtn = new Button("+");
+            private final Button decreaseBtn = new Button("-");
+            private final Button deleteBtn = new Button("Delete");
+
+            private final HBox buttons = new HBox(
+                    5, decreaseBtn, increaseBtn, deleteBtn
+            );
+
+            {
+                increaseBtn.setOnAction(event -> {
+                    Item item = getTableView().getItems().get(getIndex());
+                    increaseQuantity(item);
+                });
+
+                decreaseBtn.setOnAction(event -> {
+                    Item item = getTableView().getItems().get(getIndex());
+                    decreaseQuantity(item);
+                });
+
+                deleteBtn.setOnAction(event -> {
+                    Item item = getTableView().getItems().get(getIndex());
+                    itemObservableList.remove(item);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                setGraphic(empty ? null : buttons);
+            }
+        });
+    }
+
+
+    private void increaseQuantity(Item item) {
+
+        Product product = productTable.getItems()
+                .stream()
+                .filter(p -> p.getId() == item.getProductId())
+                .findFirst()
+                .orElse(null);
+
+        if (product == null || item.getQuantity() >= product.getQuantity()) {
+            showAlert(Alert.AlertType.WARNING,
+                    "Stock Limit", "No more stock available.");
+            return;
+        }
+
+        item.setQuantity(item.getQuantity() + 1);
+
+        item.setSubTotal(item.getQuantity() * item.getPrice());
+
+        selectedItemsTable.refresh();
+    }
+
+    private void decreaseQuantity(Item item) {
+
+        if (item.getQuantity() > 1) {
+
+            item.setQuantity(item.getQuantity() - 1);
+
+            item.setSubTotal(item.getQuantity() * item.getPrice());
+
+        } else {
+
+            itemObservableList.remove(item);
+        }
+
+        selectedItemsTable.refresh();
+    }
+
 
     private void barCodeScan() {
         PauseTransition pause = new PauseTransition(Duration.millis(200));
