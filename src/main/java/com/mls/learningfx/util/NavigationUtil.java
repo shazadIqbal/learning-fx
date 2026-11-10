@@ -47,7 +47,7 @@ public class NavigationUtil {
         stage.setMaximized(false);
 
         // scene with ui (fxml)
-        Scene scene = new Scene(fxmlLoader.load(), 600, 600);
+        Scene scene = new Scene(fxmlLoader.load(), 800, 700);
         stage.setScene(scene);
         stage.show();
     }

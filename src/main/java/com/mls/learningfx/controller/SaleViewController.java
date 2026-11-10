@@ -148,19 +148,48 @@ public class SaleViewController {
                             .findFirst().orElse(null);
 
 
+                    addOrUpdateIntoItemList(product);
                     // Process scanned barcode
                     //searchProductByBarcode(barcode);
 
                     // Clear TextField
-                    //barcodeTextField.clear();
+                    barcodeTextField.clear();
 
                     // Focus again
-                    //barcodeTextField.requestFocus();
+                    barcodeTextField.requestFocus();
                 }
             });
 
             pause.playFromStart();
         });
+    }
+
+    private void addOrUpdateIntoItemList(Product product) {
+
+      Item foundItem = selectedItemsTable.getItems()
+                .stream()
+                .filter(i->i.getProductId().equals(product.getId()))
+                .findFirst().orElse(null);
+
+      if(foundItem !=null){
+          foundItem.setQuantity(foundItem.getQuantity() + 1);
+          foundItem.setSubTotal(foundItem.getQuantity() * foundItem.getPrice());
+      }else{
+          Item item = Item.builder()
+                  .productId(product.getId())
+                  .name(product.getName())
+                  .quantity(1)
+                  .price(product.getSellPrice())
+                  .subTotal(product.getSellPrice())
+                  .build();
+
+          itemObservableList.add(item);
+
+      }
+
+        selectedItemsTable.setItems(itemObservableList);
+      selectedItemsTable.refresh();
+
     }
 
 
@@ -206,6 +235,7 @@ public class SaleViewController {
             if(product.getQuantity() > inputQty){
 
                 Item item = Item.builder()
+                        .productId(product.getId())
                         .name(product.getName())
                         .price(product.getSellPrice())
                         .quantity(inputQty)

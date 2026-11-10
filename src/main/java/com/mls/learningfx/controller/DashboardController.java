@@ -18,6 +18,9 @@ public class DashboardController {
     private Button supplierBtn;
 
     @FXML
+    private Button logoutBtn;
+
+    @FXML
     public void productView(){
         Stage stage = (Stage) productBtn.getScene().getWindow();
         try {
@@ -41,14 +44,14 @@ public class DashboardController {
     @FXML
     public void onSaleClick(){
         Stage stage = (Stage) productBtn.getScene().getWindow();
+
         try {
             NavigationUtil.navigate(stage,SALE_VIEW);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    @FXML
-    private Button logoutBtn;
+
 
    @FXML
     public void logout() {
