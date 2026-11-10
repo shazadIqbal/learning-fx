@@ -1,0 +1,98 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="650.0"
+            prefWidth="702.0"
+            xmlns="http://javafx.com/javafx/26"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mls.learningfx.controller.CustomerViewController">
+
+    <top>
+        <VBox spacing="15">
+            <padding>
+                <Insets bottom="15" left="25" right="25" top="20"/>
+            </padding>
+
+            <Button fx:id="backButton"
+                    text="Back to Dashboard"/>
+
+            <Label text="Customer Management"/>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <TextField fx:id="searchField"
+                           prefHeight="42"
+                           promptText="Search customer by name or contact..."
+                           HBox.hgrow="ALWAYS"/>
+
+                <Button onAction="#handleSearch"
+                        prefHeight="42"
+                        prefWidth="100"
+                        text="Search"/>
+
+                <Button onAction="#handleShowAll"
+                        prefHeight="42"
+                        prefWidth="100"
+                        text="Show All"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="15">
+            <padding>
+                <Insets bottom="15" left="25" right="25" top="10"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Customer Records"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button onAction="#addCustomer"
+                        prefHeight="35"
+                        prefWidth="130"
+                        text="Add Customer"/>
+            </HBox>
+
+            <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="idColumn"
+                                 prefWidth="65"
+                                 text="ID"/>
+
+                    <TableColumn fx:id="nameColumn"
+                                 prefWidth="200"
+                                 text="Customer Name"/>
+
+                    <TableColumn fx:id="contactColumn"
+                                 prefWidth="150"
+                                 text="Contact"/>
+
+                    <TableColumn fx:id="actionColumn"
+                                 prefWidth="170"
+                                 text="Actions"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+    <bottom>
+        <VBox>
+            <padding>
+                <Insets bottom="20" left="25" right="25" top="15"/>
+            </padding>
+
+            <Separator/>
+        </VBox>
+    </bottom>
+
+</BorderPane>
