@@ -32,7 +32,10 @@
                <padding>
                   <Insets top="60.0" />
                </padding></Button>
-            <Button mnemonicParsing="false" prefHeight="96.0" prefWidth="160.0" text="Button" GridPane.columnIndex="2" />
+            <Button fx:id="customerBtn" mnemonicParsing="false" onAction="#customerView" prefHeight="96.0" prefWidth="160.0" text="Customer" GridPane.columnIndex="2">
+               <padding>
+                  <Insets top="60.0" />
+               </padding></Button>
             <Button mnemonicParsing="false" onAction="#onSaleClick" prefHeight="98.0" prefWidth="185.0" text="Sale" GridPane.rowIndex="1" />
             <Button mnemonicParsing="false" prefHeight="101.0" prefWidth="171.0" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Button mnemonicParsing="false" prefHeight="99.0" prefWidth="159.0" text="Button" GridPane.columnIndex="2" GridPane.rowIndex="1" />
@@ -44,6 +47,11 @@
             <ImageView fitHeight="36.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
                <image>
                   <Image url="@icon/supplier.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="36.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+               <image>
+                  <Image url="@icon/group.png" />
                </image>
             </ImageView>
          </children>
