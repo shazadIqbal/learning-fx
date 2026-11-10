@@ -19,6 +19,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 import static com.mls.learningfx.util.NavigationUtil.DASHBOARD;
 import static com.mls.learningfx.util.NavigationUtil.PRODUCT_VIEW;
@@ -234,18 +235,33 @@ public class SaleViewController {
             //its product stock
             if(product.getQuantity() > inputQty){
 
-                Item item = Item.builder()
-                        .productId(product.getId())
-                        .name(product.getName())
-                        .price(product.getSellPrice())
-                        .quantity(inputQty)
-                        .subTotal(inputQty * product.getSellPrice())
-                        .build();
-                itemObservableList.add(item);
+
+
+                Item itemFound = itemObservableList.stream()
+                                .filter(i->i.getProductId().equals(product.getId()))
+                                        .findFirst().orElse(null);
+                if(itemFound != null){
+                    itemFound.setQuantity(itemFound.getQuantity() + inputQty);
+                    itemFound.setSubTotal(itemFound.getQuantity() * product.getSellPrice());
+
+                }else{
+                    Item item = Item.builder()
+                            .productId(product.getId())
+                            .name(product.getName())
+                            .price(product.getSellPrice())
+                            .quantity(inputQty)
+                            .subTotal(inputQty * product.getSellPrice())
+                            .build();
+
+                    itemObservableList.add(item);
+                }
+
+
 
             }
 
             selectedItemsTable.setItems(itemObservableList);
+            selectedItemsTable.refresh();
 
         });
 
