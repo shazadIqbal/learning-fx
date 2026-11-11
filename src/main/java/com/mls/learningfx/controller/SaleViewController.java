@@ -237,7 +237,7 @@ public class SaleViewController {
             itemObservableList.remove(item);
         }
 
-        selectedItemsTable.refresh();
+        refreshTable();
     }
 
 
@@ -687,4 +687,3 @@ public class SaleViewController {
         alert.showAndWait();
     }
 }
-
