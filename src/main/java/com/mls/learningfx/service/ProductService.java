@@ -29,7 +29,7 @@ public class ProductService {
         return observableList;
     }
 
-    public boolean addProduct(String name, Integer categoryId,
+    public Integer addProduct(String name, Integer categoryId,
                               Double price, Double sellPrice,
                               Integer createdBy, String barcode) {
 
@@ -50,6 +50,14 @@ public class ProductService {
     public boolean deleteProduct(int id) {
 
         return productRepository.deleteProduct(id);
+    }
+
+    public boolean addStock(int productId, int qty,
+                            Integer supplierId, Integer createdBy) {
+
+        return productRepository.addStock(
+                productId, qty, supplierId, createdBy
+        );
     }
 
     public ObservableList<Product> searchProducts(String keyword) {
