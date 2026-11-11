@@ -18,6 +18,7 @@ public class ProductRepository extends BaseRepository {
                 "FROM product p " +
                 "LEFT JOIN product_category c ON p.category_id = c.id " +
                 "LEFT JOIN users u ON p.created_by = u.id " +
+                "WHERE p.is_active = TRUE " +
                 "ORDER BY p.id";
 
         return loadProducts(sql, null);
@@ -61,9 +62,10 @@ public class ProductRepository extends BaseRepository {
         return rows > 0;
     }
 
+    // hide the product, do not remove it
     public boolean deleteProduct(int id) {
 
-        String sql = "DELETE FROM product WHERE id = ?";
+        String sql = "UPDATE product SET is_active = FALSE WHERE id = ?";
 
         int rows = executeUpdate(sql, id);
 
@@ -95,10 +97,11 @@ public class ProductRepository extends BaseRepository {
                 "FROM product p " +
                 "LEFT JOIN product_category c ON p.category_id = c.id " +
                 "LEFT JOIN users u ON p.created_by = u.id " +
-                "WHERE p.name ILIKE ? " +
+                "WHERE p.is_active = TRUE " +
+                "AND (p.name ILIKE ? " +
                 "OR c.name ILIKE ? " +
                 "OR u.name ILIKE ? " +
-                "OR p.barcode ILIKE ? " +
+                "OR p.barcode ILIKE ?) " +
                 "ORDER BY p.id";
 
         return loadProducts(sql, "%" + keyword.trim() + "%");

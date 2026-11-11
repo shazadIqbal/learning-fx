@@ -623,11 +623,8 @@ public class ProductViewController {
 
             } catch (RuntimeException e) {
 
-                showError(
-                        "Could not delete this product. " +
-                                "It may be used in stock, sales, " +
-                                "or supplier records."
-                );
+                showError("Could not delete this product: " +
+                        e.getMessage());
             }
         }
     }
