@@ -85,6 +85,9 @@ public class SaleViewController {
     @FXML
     public TextField barcodeTextField;
 
+    @FXML
+    public Label grandTotalLabel;
+
 
     private final ProductService productService = new ProductService();
     private final SaleReportService saleReportService = new SaleReportService();
@@ -206,7 +209,19 @@ public class SaleViewController {
 
         item.setSubTotal(item.getQuantity() * item.getPrice());
 
+        refreshTable();
+    }
+
+    private void refreshTable() {
+        Double sum = 0.0;
+        for(Item item : selectedItemsTable.getItems()){
+            sum += item.getSubTotal();
+
+        }
+
+        grandTotalLabel.setText(sum.toString());
         selectedItemsTable.refresh();
+
     }
 
     private void decreaseQuantity(Item item) {
@@ -222,7 +237,7 @@ public class SaleViewController {
             itemObservableList.remove(item);
         }
 
-        selectedItemsTable.refresh();
+        refreshTable();
     }
 
 
@@ -282,7 +297,7 @@ public class SaleViewController {
         }
 
         selectedItemsTable.setItems(itemObservableList);
-        selectedItemsTable.refresh();
+      refreshTable();
 
     }
 
@@ -354,7 +369,7 @@ public class SaleViewController {
             }
 
             selectedItemsTable.setItems(itemObservableList);
-            selectedItemsTable.refresh();
+            refreshTable();
 
         });
 
@@ -671,4 +686,3 @@ public class SaleViewController {
         alert.showAndWait();
     }
 }
-
