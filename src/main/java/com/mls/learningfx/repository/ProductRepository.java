@@ -62,10 +62,9 @@ public class ProductRepository extends BaseRepository {
         return rows > 0;
     }
 
-    // hide the product, do not remove it
     public boolean deleteProduct(int id) {
 
-        String sql = "UPDATE product SET is_active = FALSE WHERE id = ?";
+        String sql = "DELETE FROM product WHERE id = ?";
 
         int rows = executeUpdate(sql, id);
 

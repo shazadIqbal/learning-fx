@@ -6,38 +6,132 @@
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mls.learningfx.controller.ReportController">
+<AnchorPane prefHeight="550.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mls.learningfx.controller.ReportController">
 
     <children>
 
+        <HBox alignment="CENTER" prefHeight="90.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
-        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="700.0">
             <children>
                 <Label text="REPORTS">
                     <font>
-                        <Font size="36.0" />
+                        <Font size="32.0" />
                     </font>
                 </Label>
             </children>
+
         </HBox>
 
-        <BarChart fx:id="reportChart" layoutY="224.0" prefHeight="276.0" prefWidth="371.0">
 
-            <xAxis>
-                <CategoryAxis label="Products" />
-            </xAxis>
+        <Button fx:id="backBtn" mnemonicParsing="false" onAction="#goBack" text="BACK" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="25.0" />
 
-            <yAxis>
-                <NumberAxis label="Quantity" />
-            </yAxis>
 
-        </BarChart>
-        <PieChart fx:id="pieChart" layoutX="387.0" layoutY="224.0" prefHeight="263.0" prefWidth="313.0" />
-      <Button fx:id="backBtn" mnemonicParsing="false" onAction="#goBack" text="BACK" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="40.0" />
+        <Button onAction="#refreshReports" text="REFRESH" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0" />
+
+
+        <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="90.0">
+
+            <tabs>
+
+                <!-- Low Stock -->
+                <Tab text="Low Stock">
+
+                    <content>
+                        <BarChart fx:id="reportChart" animated="false" legendVisible="false" title="Low Stock Products">
+
+                            <xAxis>
+                                <CategoryAxis label="Products" />
+                            </xAxis>
+
+                            <yAxis>
+                                <NumberAxis label="Quantity" />
+                            </yAxis>
+
+                        </BarChart>
+                    </content>
+
+                </Tab>
+
+
+                <!-- Day-wise Sales -->
+                <Tab text="Day-wise Sales">
+
+                    <content>
+                        <BarChart fx:id="salesChart" animated="false" legendVisible="false" title="Daily Sales">
+
+                            <xAxis>
+                                <CategoryAxis label="Date" />
+                            </xAxis>
+
+                            <yAxis>
+                                <NumberAxis label="Sales Amount" />
+                            </yAxis>
+
+                        </BarChart>
+                    </content>
+
+                </Tab>
+
+
+                <!-- Day-wise Profit -->
+                <Tab text="Day-wise Profit">
+
+                    <content>
+                        <BarChart fx:id="profitChart" animated="false" legendVisible="false" title="Daily Profit">
+
+                            <xAxis>
+                                <CategoryAxis label="Date" />
+                            </xAxis>
+
+                            <yAxis>
+                                <NumberAxis label="Profit Amount" />
+                            </yAxis>
+
+                        </BarChart>
+                    </content>
+
+                </Tab>
+
+
+                <!-- Most Selling -->
+                <Tab text="Most Selling">
+
+                    <content>
+                        <BarChart fx:id="mostSellingChart" animated="false" legendVisible="false" title="Top Selling Products">
+
+                            <xAxis>
+                                <CategoryAxis label="Products" />
+                            </xAxis>
+
+                            <yAxis>
+                                <NumberAxis label="Quantity Sold" />
+                            </yAxis>
+
+                        </BarChart>
+                    </content>
+
+                </Tab>
+
+
+                <!-- Pie Chart -->
+                <Tab text="Sales Distribution">
+
+                    <content>
+                        <PieChart fx:id="pieChart" animated="false" title="Most Selling Products" />
+                    </content>
+
+                </Tab>
+
+            </tabs>
+
+        </TabPane>
 
     </children>
+
 </AnchorPane>
