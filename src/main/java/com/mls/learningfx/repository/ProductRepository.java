@@ -14,11 +14,12 @@ public class ProductRepository extends BaseRepository {
     public List<Product> getAllProducts() {
         String sql = "SELECT p.*, c.name AS category_name, " +
                 "u.name AS created_by_name, " +
-                "s.qty AS quantity " +
+                "GREATEST(COALESCE(s.qty, 0) - COALESCE(sold.qty, 0), 0) AS quantity " +
                 "FROM product p " +
                 "LEFT JOIN product_category c ON p.category_id = c.id " +
                 "LEFT JOIN users u ON p.created_by = u.id " +
-                "LEFT JOIN stock s on s.product_id = p.id " +
+                "LEFT JOIN (SELECT product_id, SUM(qty) AS qty FROM stock GROUP BY product_id) s on s.product_id = p.id " +
+                "LEFT JOIN (SELECT p_id, SUM(qty) AS qty FROM sale_item GROUP BY p_id) sold ON sold.p_id = p.id " +
                 "ORDER BY p.id";
 
         return loadProducts(sql, null);
@@ -69,11 +70,12 @@ public class ProductRepository extends BaseRepository {
 
         String sql = "SELECT p.*, c.name AS category_name, " +
                 "u.name AS created_by_name, " +
-                "s.qty AS quantity " +
+                "GREATEST(COALESCE(s.qty, 0) - COALESCE(sold.qty, 0), 0) AS quantity " +
                 "FROM product p " +
                 "LEFT JOIN product_category c ON p.category_id = c.id " +
                 "LEFT JOIN users u ON p.created_by = u.id " +
-                "LEFT JOIN stock s ON s.product_id = p.id " +
+                "LEFT JOIN (SELECT product_id, SUM(qty) AS qty FROM stock GROUP BY product_id) s ON s.product_id = p.id " +
+                "LEFT JOIN (SELECT p_id, SUM(qty) AS qty FROM sale_item GROUP BY p_id) sold ON sold.p_id = p.id " +
                 "WHERE p.name ILIKE ? " +
                 "OR c.name ILIKE ? " +
                 "OR u.name ILIKE ? " +
