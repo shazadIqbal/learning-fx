@@ -57,12 +57,11 @@ public class ProductViewController {
     @FXML
     private Button backButton;
 
-
-
     @FXML
     private Button addProductButton;
 
     private final ProductService productService = new ProductService();
+
 
     @FXML
     public void initialize() {
