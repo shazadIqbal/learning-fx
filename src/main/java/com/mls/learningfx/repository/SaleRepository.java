@@ -7,6 +7,9 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import com.mls.learningfx.model.CustomerSaleHistory;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class SaleRepository extends BaseRepository {
 
@@ -166,4 +169,86 @@ public class SaleRepository extends BaseRepository {
             }
         }
     }
+
+    // GET CUSTOMER SALE HISTORY
+    public List<CustomerSaleHistory> getCustomerSaleHistory(
+            Integer customerId) {
+
+        List<CustomerSaleHistory> historyList = new ArrayList<>();
+
+        String sql =
+                "SELECT s.s_id, s.date, pt.mode AS payment_mode, " +
+                        "s.total_price, " +
+                        "COALESCE(STRING_AGG(" +
+                        "p.name || ' x ' || si.qty::TEXT, ', ' ORDER BY p.name" +
+                        "), 'No items') AS purchased_items " +
+                        "FROM sale s " +
+                        "LEFT JOIN payment_type pt ON s.payment_type_id = pt.id " +
+                        "LEFT JOIN sale_item si ON s.s_id = si.s_id " +
+                        "LEFT JOIN product p ON si.p_id = p.id " +
+                        "WHERE s.cus_id = ? " +
+                        "GROUP BY s.s_id, s.date, pt.mode, s.total_price " +
+                        "ORDER BY s.date DESC";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, customerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+
+                    String date = rs.getTimestamp("date")
+                            .toLocalDateTime()
+                            .format(DateTimeFormatter.ofPattern(
+                                    "dd MMM yyyy, hh:mm a"));
+
+                    historyList.add(
+                            CustomerSaleHistory.builder()
+                                    .saleId(rs.getInt("s_id"))
+                                    .purchaseDate(date)
+                                    .paymentMode(rs.getString("payment_mode"))
+                                    .totalPrice(rs.getBigDecimal("total_price"))
+                                    .purchasedItems(rs.getString("purchased_items"))
+                                    .build()
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "Failed to fetch customer sale history", e);
+        }
+
+        return historyList;
+    }
+
+    // GET TOTAL CUSTOMER SPENDINGS
+    public BigDecimal getCustomerTotalSpendings(Integer customerId) {
+
+        String sql =
+                "SELECT COALESCE(SUM(total_price), 0) AS total_spending " +
+                        "FROM sale WHERE cus_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, customerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+                    return rs.getBigDecimal("total_spending");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "Failed to calculate customer spendings", e);
+        }
+
+        return BigDecimal.ZERO;
+    }
+
 }
