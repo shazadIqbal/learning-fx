@@ -1,7 +1,9 @@
 package com.mls.learningfx.controller;
 
 import com.mls.learningfx.model.Product;
+import com.mls.learningfx.model.Supplier;
 import com.mls.learningfx.service.ProductService;
+import com.mls.learningfx.service.SupplierService;
 import com.mls.learningfx.service.UserService;
 import com.mls.learningfx.util.NavigationUtil;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -16,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -43,6 +46,9 @@ public class ProductViewController {
     private TableColumn<Product, Double> sellPriceColumn;
 
     @FXML
+    private TableColumn<Product, Integer> stockColumn;
+
+    @FXML
     private TableColumn<Product, String> createdByColumn;
 
     @FXML
@@ -60,7 +66,12 @@ public class ProductViewController {
     @FXML
     private Button addProductButton;
 
+    @FXML
+    private Button updateStockButton;
+
     private final ProductService productService = new ProductService();
+
+    private final SupplierService supplierService = new SupplierService();
 
 
     @FXML
@@ -90,6 +101,10 @@ public class ProductViewController {
                 new PropertyValueFactory<>("sellPrice")
         );
 
+        stockColumn.setCellValueFactory(
+                new PropertyValueFactory<>("quantity")
+        );
+
         createdByColumn.setCellValueFactory(
                 new PropertyValueFactory<>("createdByName")
         );
@@ -99,6 +114,8 @@ public class ProductViewController {
         getAllProducts();
 
         addProductButton.setOnAction(e -> addProduct());
+
+        updateStockButton.setOnAction(e -> updateStock());
 
         backButton.setOnAction(e -> backToDashboard());
 
@@ -205,6 +222,96 @@ public class ProductViewController {
     }
 
 
+    private void updateStock() {
+
+        Product product =
+                productTable.getSelectionModel().getSelectedItem();
+
+        if (product == null) {
+            showError("Please select a product first");
+            return;
+        }
+
+        ComboBox<Integer> supplierBox = createSupplierDropdown();
+
+        TextField qtyField = new TextField();
+        qtyField.setPromptText("Quantity to add");
+
+        VBox vbox = new VBox(10);
+
+        vbox.setPadding(new Insets(20));
+        vbox.setPrefWidth(320);
+
+        vbox.getChildren().addAll(
+                new Label("Product: " + product.getName()),
+                new Label("Current Stock: " + product.getQuantity()),
+
+                new Label("Quantity to Add"),
+                qtyField,
+
+                new Label("Supplier"),
+                supplierBox
+        );
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+
+        dialog.setTitle("Update Stock");
+        dialog.getDialogPane().setContent(vbox);
+
+        ButtonType saveButton = new ButtonType(
+                "Save",
+                ButtonBar.ButtonData.OK_DONE
+        );
+
+        dialog.getDialogPane().getButtonTypes().addAll(
+                saveButton,
+                ButtonType.CANCEL
+        );
+
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        if (result.isPresent() && result.get() == saveButton) {
+
+            try {
+
+                int qty = Integer.parseInt(qtyField.getText().trim());
+
+                if (qty <= 0) {
+                    showError("Quantity must be more than 0");
+                    return;
+                }
+
+                if (supplierBox.getValue() == null) {
+                    showError("Please select a supplier");
+                    return;
+                }
+
+                boolean saved = productService.addStock(
+                        product.getId(),
+                        qty,
+                        supplierBox.getValue(),
+                        UserService.getLoggedInUserId()
+                );
+
+                if (saved) {
+                    showSuccess("Stock updated successfully");
+                    searchProducts();
+                } else {
+                    showError("Something went wrong");
+                }
+
+            } catch (NumberFormatException e) {
+
+                showError("Please enter a whole number for quantity");
+
+            } catch (RuntimeException e) {
+
+                showError("Could not update stock: " + e.getMessage());
+            }
+        }
+    }
+
+
     private ComboBox<Integer> createDropdown(
             Map<Integer, String> items) {
 
@@ -236,6 +343,22 @@ public class ProductViewController {
     }
 
 
+    private ComboBox<Integer> createSupplierDropdown() {
+
+        // id and name of each supplier
+        Map<Integer, String> suppliers = new LinkedHashMap<>();
+
+        for (Supplier supplier : supplierService.getAllSuppliers()) {
+            suppliers.put(supplier.getId(), supplier.getName());
+        }
+
+        ComboBox<Integer> supplierBox = createDropdown(suppliers);
+        supplierBox.setPromptText("Select Supplier");
+
+        return supplierBox;
+    }
+
+
     private void showProductDialog(Product product) {
 
         boolean isEdit = product != null;
@@ -250,6 +373,12 @@ public class ProductViewController {
         TextField priceField = new TextField();
         TextField sellPriceField = new TextField();
         TextField barcodeInputField = new TextField();
+
+        // for new product only
+        TextField stockField = new TextField();
+        stockField.setPromptText("Leave empty for 0");
+
+        ComboBox<Integer> supplierBox = createSupplierDropdown();
 
         Map<Integer, String> categories =
                 productService.getAllCategories();
@@ -296,6 +425,16 @@ public class ProductViewController {
                 new Label("Barcode"),
                 barcodeInputField
         );
+
+        if (!isEdit) {
+            vbox.getChildren().addAll(
+                    new Label("Stock"),
+                    stockField,
+
+                    new Label("Supplier (needed if stock is more than 0)"),
+                    supplierBox
+            );
+        }
 
         dialog.getDialogPane().setContent(vbox);
 
@@ -351,6 +490,30 @@ public class ProductViewController {
                     return;
                 }
 
+                // empty stock means 0
+                int stock = 0;
+                String stockText = stockField.getText().trim();
+
+                if (!isEdit && !stockText.isEmpty()) {
+
+                    try {
+                        stock = Integer.parseInt(stockText);
+                    } catch (NumberFormatException e) {
+                        showError("Please enter a whole number for stock");
+                        return;
+                    }
+
+                    if (stock < 0) {
+                        showError("Stock cannot be negative");
+                        return;
+                    }
+
+                    if (stock > 0 && supplierBox.getValue() == null) {
+                        showError("Please select a supplier for the stock");
+                        return;
+                    }
+                }
+
                 boolean saved;
 
                 if (isEdit) {
@@ -373,7 +536,7 @@ public class ProductViewController {
                         return;
                     }
 
-                    saved = productService.addProduct(
+                    Integer newProductId = productService.addProduct(
                             name,
                             categoryBox.getValue(),
                             price,
@@ -381,6 +544,18 @@ public class ProductViewController {
                             loggedInUserId,
                             barcode
                     );
+
+                    saved = newProductId != null;
+
+                    // add stock for new product
+                    if (saved && stock > 0) {
+                        saved = productService.addStock(
+                                newProductId,
+                                stock,
+                                supplierBox.getValue(),
+                                loggedInUserId
+                        );
+                    }
                 }
 
                 if (saved) {
@@ -448,11 +623,8 @@ public class ProductViewController {
 
             } catch (RuntimeException e) {
 
-                showError(
-                        "Could not delete this product. " +
-                                "It may be used in stock, sales, " +
-                                "or supplier records."
-                );
+                showError("Could not delete this product: " +
+                        e.getMessage());
             }
         }
     }

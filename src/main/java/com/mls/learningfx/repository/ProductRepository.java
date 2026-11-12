@@ -14,29 +14,38 @@ public class ProductRepository extends BaseRepository {
     public List<Product> getAllProducts() {
         String sql = "SELECT p.*, c.name AS category_name, " +
                 "u.name AS created_by_name, " +
-                "GREATEST(COALESCE(s.qty, 0) - COALESCE(sold.qty, 0), 0) AS quantity " +
+                "(SELECT SUM(qty) FROM stock WHERE stock.product_id = p.id) AS quantity " +
                 "FROM product p " +
                 "LEFT JOIN product_category c ON p.category_id = c.id " +
                 "LEFT JOIN users u ON p.created_by = u.id " +
-                "LEFT JOIN (SELECT product_id, SUM(qty) AS qty FROM stock GROUP BY product_id) s on s.product_id = p.id " +
-                "LEFT JOIN (SELECT p_id, SUM(qty) AS qty FROM sale_item GROUP BY p_id) sold ON sold.p_id = p.id " +
+                "WHERE p.is_active = TRUE " +
                 "ORDER BY p.id";
 
         return loadProducts(sql, null);
     }
 
-    public boolean addProduct(String name, Integer categoryId,
+    // save product and get its id
+    public Integer addProduct(String name, Integer categoryId,
                               Double price, Double sellPrice,
                               Integer createdBy, String barcode) {
 
         String sql = "INSERT INTO product " +
                 "(name, category_id, price, sell_price, created_by, barcode) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
 
-        int rows = executeUpdate(sql, name, categoryId,
-                price, sellPrice, createdBy, barcode);
+        try (Connection conn = getConnection();
+             ResultSet rs = executeQuery(conn, sql, name, categoryId,
+                     price, sellPrice, createdBy, barcode)) {
 
-        return rows > 0;
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
     }
 
     public boolean updateProduct(int id, String name,
@@ -53,11 +62,25 @@ public class ProductRepository extends BaseRepository {
         return rows > 0;
     }
 
+    // hide the product, do not remove it
     public boolean deleteProduct(int id) {
 
-        String sql = "DELETE FROM product WHERE id = ?";
+        String sql = "UPDATE product SET is_active = FALSE WHERE id = ?";
 
         int rows = executeUpdate(sql, id);
+
+        return rows > 0;
+    }
+
+    public boolean addStock(int productId, int qty,
+                            Integer supplierId, Integer createdBy) {
+
+        String sql = "INSERT INTO stock " +
+                "(qty, created_by, product_id, supplier_id) " +
+                "VALUES (?, ?, ?, ?)";
+
+        int rows = executeUpdate(sql, qty, createdBy,
+                productId, supplierId);
 
         return rows > 0;
     }
@@ -70,16 +93,15 @@ public class ProductRepository extends BaseRepository {
 
         String sql = "SELECT p.*, c.name AS category_name, " +
                 "u.name AS created_by_name, " +
-                "GREATEST(COALESCE(s.qty, 0) - COALESCE(sold.qty, 0), 0) AS quantity " +
+                "(SELECT SUM(qty) FROM stock WHERE stock.product_id = p.id) AS quantity " +
                 "FROM product p " +
                 "LEFT JOIN product_category c ON p.category_id = c.id " +
                 "LEFT JOIN users u ON p.created_by = u.id " +
-                "LEFT JOIN (SELECT product_id, SUM(qty) AS qty FROM stock GROUP BY product_id) s ON s.product_id = p.id " +
-                "LEFT JOIN (SELECT p_id, SUM(qty) AS qty FROM sale_item GROUP BY p_id) sold ON sold.p_id = p.id " +
-                "WHERE p.name ILIKE ? " +
+                "WHERE p.is_active = TRUE " +
+                "AND (p.name ILIKE ? " +
                 "OR c.name ILIKE ? " +
                 "OR u.name ILIKE ? " +
-                "OR p.barcode ILIKE ? " +
+                "OR p.barcode ILIKE ?) " +
                 "ORDER BY p.id";
 
         return loadProducts(sql, "%" + keyword.trim() + "%");
