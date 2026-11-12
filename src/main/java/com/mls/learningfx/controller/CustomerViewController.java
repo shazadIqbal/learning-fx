@@ -15,6 +15,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Optional;
+import com.mls.learningfx.HelloApplication;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import com.mls.learningfx.controller.CustomerHistoryController;
 
 public class CustomerViewController {
 
@@ -202,6 +207,7 @@ public class CustomerViewController {
 
             private final Button editBtn = new Button("Edit");
             private final Button deleteBtn = new Button("Delete");
+            private final Button historyBtn = new Button("History");
 
             private final HBox hBox = new HBox(10);
 
@@ -226,8 +232,17 @@ public class CustomerViewController {
                         deleteCustomer(customer);
                     }
                 });
+                historyBtn.setOnAction(e -> {
 
-                hBox.getChildren().addAll(editBtn, deleteBtn);
+                    Customer customer =
+                            getTableRow().getItem();
+
+                    if (customer != null) {
+                        viewCustomerHistory(customer);
+                    }
+                });
+
+                hBox.getChildren().addAll(editBtn, deleteBtn, historyBtn);
             }
 
             @Override
@@ -239,6 +254,57 @@ public class CustomerViewController {
             }
         });
     }
+
+
+    private void viewCustomerHistory(Customer customer) {
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(
+                    HelloApplication.class.getResource(
+                            "customer-history-view.fxml"
+                    )
+            );
+
+            Scene scene = new Scene(loader.load());
+
+            // Get history controller
+            CustomerHistoryController controller =
+                    loader.getController();
+
+            // Pass selected customer
+            controller.setCustomer(customer);
+
+            // Create separate popup window
+            Stage historyStage = new Stage();
+
+            historyStage.setTitle(
+                    "Purchase History - " + customer.getName()
+            );
+
+            historyStage.initOwner(
+                    tableView.getScene().getWindow()
+            );
+
+            historyStage.initModality(Modality.APPLICATION_MODAL);
+
+            historyStage.setScene(scene);
+
+            historyStage.setMinWidth(900);
+            historyStage.setMinHeight(600);
+
+            historyStage.showAndWait();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+            showError(
+                    "Unable to open customer purchase history."
+            );
+        }
+    }
+
 
     // EDIT CUSTOMER
     private void editCustomer(Customer customer) {

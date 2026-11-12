@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+
+<BorderPane prefWidth="1000"
+            prefHeight="650"
+            xmlns="http://javafx.com/javafx/26"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mls.learningfx.controller.CustomerHistoryController">
+
+    <top>
+        <VBox spacing="15">
+            <padding>
+                <Insets top="25" right="25"
+                        bottom="20" left="25"/>
+            </padding>
+
+            <Label text="Customer Purchase History"
+                   style="-fx-font-size: 23px; -fx-font-weight: bold;"/>
+
+            <VBox spacing="7">
+                <Label fx:id="customerNameLabel"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                <HBox spacing="25">
+                    <Label fx:id="customerIdLabel"/>
+                    <Label fx:id="customerContactLabel"/>
+                </HBox>
+            </VBox>
+
+            <HBox spacing="20">
+
+                <VBox spacing="8"
+                      style="-fx-background-color: #eaf2ff; -fx-padding: 18; -fx-background-radius: 8;"
+                      HBox.hgrow="ALWAYS">
+
+                    <Label text="Total Purchases"/>
+                    <Label fx:id="totalPurchasesLabel"
+                           text="0"
+                           style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+                </VBox>
+
+                <VBox spacing="8"
+                      style="-fx-background-color: #e8f7ee; -fx-padding: 18; -fx-background-radius: 8;"
+                      HBox.hgrow="ALWAYS">
+
+                    <Label text="Lifetime Spending"/>
+                    <Label fx:id="totalSpendingsLabel"
+                           text="Rs. 0.00"
+                           style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+                </VBox>
+
+            </HBox>
+
+            <Label text="Purchase Records"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+        </VBox>
+    </top>
+
+    <center>
+        <VBox>
+            <padding>
+                <Insets left="25" right="25" bottom="25"/>
+            </padding>
+
+            <TableView fx:id="historyTable"
+                       VBox.vgrow="ALWAYS">
+
+                <columns>
+
+                    <TableColumn fx:id="saleIdColumn"
+                                 text="Sale ID"
+                                 prefWidth="75"/>
+
+                    <TableColumn fx:id="dateColumn"
+                                 text="Purchase Date"
+                                 prefWidth="160"/>
+
+                    <TableColumn fx:id="paymentColumn"
+                                 text="Payment Method"
+                                 prefWidth="120"/>
+
+                    <TableColumn fx:id="itemsColumn"
+                                 text="Purchased Items"
+                                 prefWidth="400"/>
+
+                    <TableColumn fx:id="totalColumn"
+                                 text="Total (Rs.)"
+                                 prefWidth="150"/>
+
+                </columns>
+
+            </TableView>
+        </VBox>
+    </center>
+
+</BorderPane>
