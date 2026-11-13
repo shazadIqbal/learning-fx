@@ -251,4 +251,123 @@ public class SaleRepository extends BaseRepository {
         return BigDecimal.ZERO;
     }
 
+    // get all items of a sale
+    public List<Item> getSaleItems(int saleId) {
+
+        List<Item> items = new ArrayList<>();
+
+        String sql = "SELECT si.p_id, p.name, si.qty, p.sell_price " +
+                "FROM sale_item si " +
+                "JOIN product p ON si.p_id = p.id " +
+                "WHERE si.s_id = ? " +
+                "ORDER BY p.name";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, saleId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+
+                    int qty = rs.getInt("qty");
+                    double price = rs.getDouble("sell_price");
+
+                    items.add(
+                            Item.builder()
+                                    .productId(rs.getInt("p_id"))
+                                    .name(rs.getString("name"))
+                                    .quantity(qty)
+                                    .price(price)
+                                    .subTotal(qty * price)
+                                    .build()
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load sale items", e);
+        }
+
+        return items;
+    }
+
+    // Return items
+    public void returnItems(int saleId,
+                            List<Item> soldItems,
+                            List<Integer> returnQtys,
+                            double refundAmount,
+                            Integer userId) {
+
+        Connection conn = null;
+
+        try {
+            conn = getConnection();
+            conn.setAutoCommit(false);
+
+            for (int i = 0; i < soldItems.size(); i++) {
+
+                Item item = soldItems.get(i);
+                int returnQty = returnQtys.get(i);
+
+                if (returnQty == 0) {
+                    continue;
+                }
+
+                if (returnQty == item.getQuantity()) {
+                    // if all items are returned then remove from sale
+                    runUpdate(conn,
+                            "DELETE FROM sale_item WHERE s_id = ? AND p_id = ?",
+                            saleId, item.getProductId());
+                } else {
+                    runUpdate(conn,
+                            "UPDATE sale_item SET qty = qty - ? WHERE s_id = ? AND p_id = ?",
+                            returnQty, saleId, item.getProductId());
+                }
+
+                // returned items go back in stock
+                runUpdate(conn,
+                        "INSERT INTO stock (qty, created_by, product_id) VALUES (?, ?, ?)",
+                        returnQty, userId, item.getProductId());
+            }
+
+            // total can not go below 0
+            runUpdate(conn,
+                    "UPDATE sale SET total_price = GREATEST(total_price - ?, 0) WHERE s_id = ?",
+                    BigDecimal.valueOf(refundAmount), saleId);
+
+            conn.commit();
+
+        } catch (Exception e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
+            throw new RuntimeException(e.getMessage(), e);
+
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException closeEx) {
+                    closeEx.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void runUpdate(Connection conn, String sql, Object... params) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+            ps.executeUpdate();
+        }
+    }
+
 }

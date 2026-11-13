@@ -1,6 +1,7 @@
 
 package com.mls.learningfx.controller;
 
+import com.mls.learningfx.HelloApplication;
 import com.mls.learningfx.model.Customer;
 import com.mls.learningfx.model.Item;
 import com.mls.learningfx.model.Product;
@@ -16,11 +17,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -531,6 +535,74 @@ public class SaleViewController {
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Report Failed",
                     "Could not create PDF: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleUpdateSale(ActionEvent event) {
+
+        // Ask invoice number dialog
+        TextInputDialog invoiceDialog = new TextInputDialog();
+        invoiceDialog.setTitle("Update Sale");
+        invoiceDialog.setHeaderText("Enter Invoice Number");
+        invoiceDialog.setContentText("Invoice No:");
+
+        Optional<String> invoiceResult = invoiceDialog.showAndWait();
+        if (invoiceResult.isEmpty()) {
+            return;
+        }
+
+        int saleId;
+        try {
+            saleId = Integer.parseInt(invoiceResult.get().trim());
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.WARNING, "Invalid Invoice",
+                    "Invoice number must be a number.");
+            return;
+        }
+
+        // Loading items of this sale
+        List<Item> soldItems;
+        try {
+            soldItems = saleService.getSaleItems(saleId);
+        } catch (RuntimeException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
+            return;
+        }
+
+        if (soldItems.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Not Found",
+                    "No items found for invoice #" + saleId + ".");
+            return;
+        }
+
+        // Open update sale popup
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    HelloApplication.class.getResource("update-sale-view.fxml")
+            );
+
+            Scene scene = new Scene(loader.load());
+
+            UpdateSaleController controller = loader.getController();
+            controller.setSale(saleId, soldItems);
+
+            Stage updateStage = new Stage();
+            updateStage.setTitle("Update Sale");
+            updateStage.initOwner(productTable.getScene().getWindow());
+            updateStage.initModality(Modality.APPLICATION_MODAL);
+            updateStage.setScene(scene);
+
+            updateStage.showAndWait();
+
+            // refresh stock if items were returned
+            if (controller.isSaved()) {
+                getAllProducts();
+            }
+
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Error",
+                    "Could not open Update Sale: " + e.getMessage());
         }
     }
 
