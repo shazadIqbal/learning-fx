@@ -156,34 +156,18 @@ public class SaleRepository extends BaseRepository {
     }
 
     private void updateStockForItems(Connection conn, List<Item> items) throws SQLException {
-        String selectSql = "SELECT id, qty FROM stock WHERE product_id = ? AND qty > 0 ORDER BY id ASC";
-        String updateSql = "UPDATE stock SET qty = qty - ?, date = ? WHERE id = ?";
+        String sql = "UPDATE stock SET qty = qty - ?, date = ? " +
+                "WHERE product_id = ? AND qty >= ?";
         Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-
-        try (PreparedStatement selectPs = conn.prepareStatement(selectSql);
-             PreparedStatement updatePs = conn.prepareStatement(updateSql)) {
-
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             for (Item item : items) {
-                int remainingToDeduct = item.getQuantity();
-
-                selectPs.setInt(1, item.getProductId());
-                try (ResultSet rs = selectPs.executeQuery()) {
-                    while (rs.next() && remainingToDeduct > 0) {
-                        int stockId = rs.getInt("id");
-                        int availableQty = rs.getInt("qty");
-                        int deduct = Math.min(remainingToDeduct, availableQty);
-
-                        updatePs.setInt(1, deduct);
-                        updatePs.setTimestamp(2, now);
-                        updatePs.setInt(3, stockId);
-                        updatePs.executeUpdate();
-
-                        remainingToDeduct -= deduct;
-                    }
-                }
-
-                if (remainingToDeduct > 0) {
-                    throw new SQLException("Insufficient stock for product: " + item.getName());
+                ps.setInt(1, item.getQuantity());
+                ps.setTimestamp(2, now);
+                ps.setInt(3, item.getProductId());
+                ps.setInt(4, item.getQuantity());
+                int rows = ps.executeUpdate();
+                if (rows == 0) {
+                    throw new SQLException("Stock record not found for product: " + item.getName());
                 }
             }
         }

@@ -21,6 +21,8 @@ public class HelloApplication extends Application {
         stage.setTitle("Stepway!");
         // set the scean into stage
         stage.setScene(scene);
+
+        stage.setMaximized(true);
         // show means view
 
         stage.setMaximized(true);

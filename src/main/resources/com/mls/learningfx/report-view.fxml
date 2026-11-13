@@ -43,7 +43,6 @@
 
             <tabs>
 
-                <!-- Low Stock -->
                 <Tab text="Low Stock">
 
                     <content>
@@ -63,7 +62,6 @@
                 </Tab>
 
 
-                <!-- Day-wise Sales -->
                 <Tab text="Day-wise Sales">
 
                     <content>
@@ -83,7 +81,6 @@
                 </Tab>
 
 
-                <!-- Day-wise Profit -->
                 <Tab text="Day-wise Profit">
 
                     <content>
@@ -103,33 +100,26 @@
                 </Tab>
 
 
-                <!-- Most Selling -->
-                <Tab text="Most Selling">
 
+
+
+                <Tab text="Most Selling Product">
                     <content>
-                        <BarChart fx:id="mostSellingChart" animated="false" legendVisible="false" title="Top Selling Products">
+                        <BarChart fx:id="salesDistributionChart"
+                                  animated="false"
+                                  title="Most Selling Products"
+                                  legendVisible="false">
 
                             <xAxis>
-                                <CategoryAxis label="Products" />
+                                <CategoryAxis label="Products"/>
                             </xAxis>
 
                             <yAxis>
-                                <NumberAxis label="Quantity Sold" />
+                                <NumberAxis label="Quantity Sold"/>
                             </yAxis>
 
                         </BarChart>
                     </content>
-
-                </Tab>
-
-
-                <!-- Pie Chart -->
-                <Tab text="Sales Distribution">
-
-                    <content>
-                        <PieChart fx:id="pieChart" animated="false" title="Most Selling Products" />
-                    </content>
-
                 </Tab>
 
             </tabs>

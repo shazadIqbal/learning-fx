@@ -8,12 +8,12 @@ import com.mls.learningfx.util.NavigationUtil;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.control.Dialog;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -37,11 +37,9 @@ public class ReportController {
     @FXML
     private BarChart<String, Number> profitChart;
 
-    @FXML
-    private BarChart<String, Number> mostSellingChart;
 
     @FXML
-    private PieChart pieChart;
+    private BarChart<String, Number> salesDistributionChart;
 
     @FXML
     private Button backBtn;
@@ -100,6 +98,23 @@ public class ReportController {
         }
 
         reportChart.getData().add(series);
+        showBarValues(series);
+    }
+    private void showBarValues(XYChart.Series<String, Number> series) {
+
+        for (XYChart.Data<String, Number> data : series.getData()) {
+
+            StackPane bar = (StackPane) data.getNode();
+
+            Label label = new Label(data.getYValue().toString());
+
+            label.setStyle(
+                    "-fx-font-weight: bold;" +
+                            "-fx-text-fill: white;"
+            );
+
+            bar.getChildren().add(label);
+        }
     }
 
 
@@ -123,6 +138,7 @@ public class ReportController {
         }
 
         salesChart.getData().add(series);
+        showBarValues(series);
     }
 
 
@@ -146,6 +162,7 @@ public class ReportController {
         }
 
         profitChart.getData().add(series);
+        showBarValues(series);
     }
 
 
@@ -153,8 +170,7 @@ public class ReportController {
 
         Map<String, Integer> data = reportService.getMostSellingProducts();
 
-        mostSellingChart.getData().clear();
-        pieChart.getData().clear();
+        salesDistributionChart.getData().clear();
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
 
@@ -168,16 +184,10 @@ public class ReportController {
                             entry.getValue()
                     )
             );
-
-            pieChart.getData().add(
-                    new PieChart.Data(
-                            entry.getKey(),
-                            entry.getValue()
-                    )
-            );
         }
 
-        mostSellingChart.getData().add(series);
+        salesDistributionChart.getData().add(series);
+        showBarValues(series);
     }
 
 
