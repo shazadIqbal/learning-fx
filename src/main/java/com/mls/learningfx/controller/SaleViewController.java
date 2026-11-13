@@ -291,7 +291,7 @@ public class SaleViewController {
 
         selectedItemsTable.setItems(itemObservableList);
         selectedItemsTable.refresh();
-      refreshTable();
+        refreshTable();
 
     }
 
@@ -540,5 +540,15 @@ public class SaleViewController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void handleViewSaleRecord(ActionEvent event) {
+        Stage stage = (Stage) searchButton.getScene().getWindow();
+        try {
+            NavigationUtil.navigate(stage, NavigationUtil.SALE_RECORD_VIEW);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
