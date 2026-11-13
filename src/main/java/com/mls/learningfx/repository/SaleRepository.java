@@ -155,13 +155,15 @@ public class SaleRepository extends BaseRepository {
     }
 
     private void updateStockForItems(Connection conn, List<Item> items) throws SQLException {
-        String sql = "UPDATE stock SET qty = qty - ?, date = ? WHERE product_id = ?";
+        String sql = "UPDATE stock SET qty = qty - ?, date = ? " +
+                "WHERE product_id = ? AND qty >= ?";
         Timestamp now = Timestamp.valueOf(LocalDateTime.now());
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             for (Item item : items) {
                 ps.setInt(1, item.getQuantity());
                 ps.setTimestamp(2, now);
                 ps.setInt(3, item.getProductId());
+                ps.setInt(4, item.getQuantity());
                 int rows = ps.executeUpdate();
                 if (rows == 0) {
                     throw new SQLException("Stock record not found for product: " + item.getName());
