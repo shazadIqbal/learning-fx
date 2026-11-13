@@ -1,11 +1,12 @@
 package com.mls.learningfx.util;
 
 import com.mls.learningfx.HelloApplication;
+import com.mls.learningfx.controller.CustomerHistoryController;
+import com.mls.learningfx.model.Customer;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import com.mls.learningfx.controller.CustomerHistoryController;
-import com.mls.learningfx.model.Customer;
+
 import java.io.IOException;
 
 public class NavigationUtil {
@@ -19,6 +20,37 @@ public class NavigationUtil {
     public static final String LOGIN ="LOGIN";
     public static final String CUSTOMER_VIEW = "CUSTOMER_VIEW";
     public static final String CUSTOMER_HISTORY_VIEW = "CUSTOMER_HISTORY_VIEW";
+
+
+
+
+
+    public static void navigate(Stage stage,String action,Object obj) throws IOException {
+
+        switch (action){
+
+            case CUSTOMER_HISTORY_VIEW:
+                Customer customer = (Customer) obj;
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class
+                        .getResource("customer-history-view.fxml"));
+
+
+            // Pass selected customer
+
+
+
+                // scene with ui (fxml)
+                Scene scene = new Scene(fxmlLoader.load(), 800, 700);
+                stage.setScene(scene);
+                stage.setMaximized(false);
+                CustomerHistoryController controller = fxmlLoader.getController();
+                controller.setCustomer(customer);
+
+                stage.show();
+
+                break;
+        }
+    }
 
     public static void navigate(Stage stage,String action) throws IOException {
 

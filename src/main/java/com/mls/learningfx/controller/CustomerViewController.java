@@ -262,9 +262,10 @@ public class CustomerViewController {
     private void viewCustomerHistory(Customer customer) {
 
 
+
             Stage stage = (Stage) backButton.getScene().getWindow();
         try {
-                NavigationUtil.navigate(stage, NavigationUtil.CUSTOMER_HISTORY_VIEW);
+                NavigationUtil.navigate(stage, NavigationUtil.CUSTOMER_HISTORY_VIEW,customer);
 
 //            FXMLLoader loader = new FXMLLoader(
 //                    HelloApplication.class.getResource(
