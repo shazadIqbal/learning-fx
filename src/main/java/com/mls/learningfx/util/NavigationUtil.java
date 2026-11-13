@@ -2,6 +2,7 @@ package com.mls.learningfx.util;
 
 import com.mls.learningfx.HelloApplication;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -34,7 +35,6 @@ public class NavigationUtil {
                 break;
             case SALE_VIEW:
                 loadView(stage,"sale-view.fxml");
-                stage.setMaximized(true);
                 break;
             case LOGIN:
                 loadView(stage,"login-view.fxml");
@@ -48,14 +48,19 @@ public class NavigationUtil {
         }
     }
 
-    private static void loadView(Stage stage,String path) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class
-                .getResource(path));
-        stage.setMaximized(false);
+    private static void loadView(Stage stage, String path) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path));
+        Parent root = fxmlLoader.load();
 
-        // scene with ui (fxml)
-        Scene scene = new Scene(fxmlLoader.load(), 800, 700);
-        stage.setScene(scene);
+        if (stage.getScene() == null) {
+            stage.setScene(new Scene(root));
+        } else {
+            stage.getScene().setRoot(root);   // same scene, sirf content badlo
+        }
+
+        if (!stage.isMaximized()) {
+            stage.setMaximized(true);
+        }
         stage.show();
     }
 }
