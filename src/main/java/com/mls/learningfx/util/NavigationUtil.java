@@ -4,7 +4,8 @@ import com.mls.learningfx.HelloApplication;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
+import com.mls.learningfx.controller.CustomerHistoryController;
+import com.mls.learningfx.model.Customer;
 import java.io.IOException;
 
 public class NavigationUtil {
@@ -17,6 +18,7 @@ public class NavigationUtil {
     public static final String REPORT_VIEW = "REPORT_VIEW";
     public static final String LOGIN ="LOGIN";
     public static final String CUSTOMER_VIEW = "CUSTOMER_VIEW";
+    public static final String CUSTOMER_HISTORY_VIEW = "CUSTOMER_HISTORY_VIEW";
 
     public static void navigate(Stage stage,String action) throws IOException {
 
@@ -45,6 +47,9 @@ public class NavigationUtil {
             case CUSTOMER_VIEW:
                 loadView(stage, "customer-view.fxml");
                 break;
+            case CUSTOMER_HISTORY_VIEW:
+                loadView(stage, "customer-history-view.fxml");
+                break;
         }
     }
 
@@ -57,5 +62,7 @@ public class NavigationUtil {
         Scene scene = new Scene(fxmlLoader.load(), 800, 700);
         stage.setScene(scene);
         stage.show();
+
     }
+
 }

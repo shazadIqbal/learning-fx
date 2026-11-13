@@ -4,18 +4,27 @@ import com.mls.learningfx.model.Customer;
 import com.mls.learningfx.model.CustomerSaleHistory;
 import com.mls.learningfx.service.SaleService;
 
+import com.mls.learningfx.util.NavigationUtil;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+import com.mls.learningfx.util.NavigationUtil;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
+import java.io.IOException;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
 public class CustomerHistoryController {
-
     @FXML
     private Label customerNameLabel;
 
@@ -48,6 +57,9 @@ public class CustomerHistoryController {
 
     @FXML
     private TableColumn<CustomerSaleHistory, BigDecimal> totalColumn;
+
+    @FXML
+    private Button backButton;
 
     private final SaleService saleService = new SaleService();
 
@@ -117,6 +129,20 @@ public class CustomerHistoryController {
             historyTable.setPlaceholder(
                     new Label("No purchase history available.")
             );
+        }
+    }
+    @FXML
+    private void backToCustomers() {
+
+        Stage stage = (Stage)
+                backButton.getScene().getWindow();
+        try {
+            NavigationUtil.navigate(
+                    stage,
+                    NavigationUtil.CUSTOMER_VIEW
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -43,6 +43,9 @@ public class CustomerViewController {
 
     @FXML
     private Button backButton;
+    @FXML
+    private Button historyBtn;
+
 
     private final CustomerService customerService =
             new CustomerService();
@@ -258,50 +261,54 @@ public class CustomerViewController {
 
     private void viewCustomerHistory(Customer customer) {
 
+
+            Stage stage = (Stage) backButton.getScene().getWindow();
         try {
+                NavigationUtil.navigate(stage, NavigationUtil.CUSTOMER_HISTORY_VIEW);
 
-            FXMLLoader loader = new FXMLLoader(
-                    HelloApplication.class.getResource(
-                            "customer-history-view.fxml"
-                    )
-            );
-
-            Scene scene = new Scene(loader.load());
-
-            // Get history controller
-            CustomerHistoryController controller =
-                    loader.getController();
-
-            // Pass selected customer
-            controller.setCustomer(customer);
-
-            // Create separate popup window
-            Stage historyStage = new Stage();
-
-            historyStage.setTitle(
-                    "Purchase History - " + customer.getName()
-            );
-
-            historyStage.initOwner(
-                    tableView.getScene().getWindow()
-            );
-
-            historyStage.initModality(Modality.APPLICATION_MODAL);
-
-            historyStage.setScene(scene);
-
-            historyStage.setMinWidth(900);
-            historyStage.setMinHeight(600);
-
-            historyStage.showAndWait();
+//            FXMLLoader loader = new FXMLLoader(
+//                    HelloApplication.class.getResource(
+//                            "customer-history-view.fxml"
+//                    )
+//            );
+//
+//            Scene scene = new Scene(loader.load());
+//
+//            // Get history controller
+//            CustomerHistoryController controller =
+//                    loader.getController();
+//
+//            // Pass selected customer
+//            controller.setCustomer(customer);
+//
+//            // Create separate popup window
+//            Stage historyStage = new Stage();
+//
+//            historyStage.setTitle(
+//                    "Purchase History - " + customer.getName()
+//            );
+//
+//            historyStage.initOwner(
+//                    tableView.getScene().getWindow()
+//            );
+//
+//            historyStage.initModality(Modality.APPLICATION_MODAL);
+//
+//            historyStage.setScene(scene);
+//
+//            historyStage.setMinWidth(900);
+//            historyStage.setMinHeight(600);
+//
+//            historyStage.showAndWait();
 
         } catch (IOException e) {
+            throw new RuntimeException(e);
 
-            e.printStackTrace();
-
-            showError(
-                    "Unable to open customer purchase history."
-            );
+//            e.printStackTrace();
+//
+//            showError(
+//                    "Unable to open customer purchase history."
+//            );
         }
     }
 
