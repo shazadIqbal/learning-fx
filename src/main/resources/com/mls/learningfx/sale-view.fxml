@@ -22,6 +22,8 @@
                 <Insets bottom="15" left="25" right="25" top="20" />
             </padding>
 
+            <Button fx:id="viewSaleRecordButton" onAction="#handleViewSaleRecord" prefHeight="38" prefWidth="160" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="View Sale Record" />
+
             <Label style="-fx-font-size: 25px; -fx-font-weight: bold;" text="Create New Sale" />
 
             <HBox alignment="CENTER_LEFT" spacing="10">
@@ -47,11 +49,11 @@
             <VBox spacing="10" VBox.vgrow="ALWAYS">
 
                 <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="Available Products" />
-            <HBox alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="652.0">
-               <children>
-                  <TextField fx:id="barcodeTextField" promptText="BarCode" />
-               </children>
-            </HBox>
+                <HBox alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="652.0">
+                    <children>
+                        <TextField fx:id="barcodeTextField" promptText="BarCode" />
+                    </children>
+                </HBox>
 
                 <TableView fx:id="productTable" onMouseClicked="#handleProductClick" VBox.vgrow="ALWAYS">
 
@@ -66,7 +68,7 @@
                         <TableColumn fx:id="productCategoryColumn" prefWidth="110" text="Category" />
 
                         <TableColumn fx:id="productPriceColumn" prefWidth="116.0" text="Price" />
-                  <TableColumn fx:id="productStockColumn" prefWidth="75.0" text="Stock" />
+                        <TableColumn fx:id="productStockColumn" prefWidth="75.0" text="Stock" />
 
                     </columns>
 
@@ -106,7 +108,7 @@
                         <TableColumn fx:id="priceColumn" prefWidth="100" text="Price" />
 
                         <TableColumn fx:id="subTotalColumn" prefWidth="110" text="Subtotal" />
-                  <TableColumn fx:id="actionColumn" prefWidth="215.0" text="Actions" />
+                        <TableColumn fx:id="actionColumn" prefWidth="215.0" text="Actions" />
 
                     </columns>
 
@@ -142,8 +144,6 @@
             <HBox alignment="CENTER_RIGHT" spacing="12">
 
                 <Button fx:id="backButton" onAction="#handleBack" prefHeight="45" prefWidth="130" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 6;" text="Back" />
-
-                <Button fx:id="reportButton" onAction="#handleReport" prefHeight="45" prefWidth="130" style="-fx-background-color: #2563eb;                                -fx-text-fill: white;                                -fx-font-size: 14px;                                -fx-font-weight: bold;                                -fx-background-radius: 6;" text="Report" />
 
                 <Button fx:id="checkoutButton" onAction="#handleCheckout" prefHeight="45" prefWidth="170" style="-fx-background-color: #16a34a;                                -fx-text-fill: white;                                -fx-font-size: 15px;                                -fx-font-weight: bold;                                -fx-background-radius: 6;" text="Checkout" />
 
