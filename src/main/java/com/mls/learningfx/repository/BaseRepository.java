@@ -19,7 +19,7 @@ public abstract class BaseRepository {
             return DriverManager.getConnection(
                     "jdbc:postgresql://localhost:5432/inventory",
                     "postgres",
-                    "123");
+                    "root");
 
         } catch (SQLException e) {
             throw new RuntimeException(
