@@ -31,6 +31,10 @@
 
         <Button fx:id="backBtn" mnemonicParsing="false" onAction="#goBack" text="BACK" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="25.0" />
 
+        <Button text="DOWNLOAD MONTHLY REPORT"
+                onAction="#downloadMonthlyReport"
+                AnchorPane.rightAnchor="125.0"
+                AnchorPane.topAnchor="25.0"/>
 
         <Button onAction="#refreshReports" text="REFRESH" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0" />
 

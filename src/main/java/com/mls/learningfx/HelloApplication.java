@@ -24,6 +24,9 @@ public class HelloApplication extends Application {
 
         stage.setMaximized(true);
         // show means view
+
+        stage.setMaximized(true);
+
         stage.show();
     }
 }
