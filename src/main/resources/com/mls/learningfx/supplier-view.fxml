@@ -24,7 +24,7 @@
       </HBox>
       <HBox layoutX="8.0" layoutY="65.0" prefHeight="75.0" prefWidth="586.0">
          <children>
-            <Button minWidth="-Infinity" onAction="#goBack" prefHeight="26.0" prefWidth="108.0" style="-fx-background-color: transparent; -fx-text-fill: #475569; -fx-cursor: hand;" text="‹  Dashboard">
+            <Button minWidth="-Infinity" onAction="#goBack" prefHeight="26.0" prefWidth="108.0" text="Back">
                <HBox.margin>
                   <Insets left="10.0" top="20.0" />
                </HBox.margin>

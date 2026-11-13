@@ -325,8 +325,7 @@ public class SupplierController {
     @FXML
     public void getAllSupplier() {
 
-        List<Supplier> suppliers =
-                supplierService.getAllSuppliers();
+        List<Supplier> suppliers = supplierService.getAllSuppliers();
 
         supplierList.setAll(suppliers);
     }

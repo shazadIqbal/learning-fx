@@ -25,12 +25,15 @@ public class NavigationUtil {
 
             case DASHBOARD:
                 loadView(stage,"dashboard-view.fxml");
+                stage.setMaximized(true);
                 break;
             case PRODUCT_VIEW:
                 loadView(stage,"product-view.fxml");
+                stage.setMaximized(true);
                 break;
             case SUPPLIER_VIEW:
                 loadView(stage, "supplier-view.fxml");
+                stage.setMaximized(true);
                 break;
             case SALE_VIEW:
                 loadView(stage,"sale-view.fxml");
@@ -38,12 +41,15 @@ public class NavigationUtil {
                 break;
             case LOGIN:
                 loadView(stage,"login-view.fxml");
+                stage.setMaximized(true);
                 break;
             case REPORT_VIEW:
                 loadView(stage,"report-view.fxml");
+                stage.setMaximized(true);
                 break;
             case CUSTOMER_VIEW:
                 loadView(stage, "customer-view.fxml");
+                stage.setMaximized(true);
                 break;
         }
     }

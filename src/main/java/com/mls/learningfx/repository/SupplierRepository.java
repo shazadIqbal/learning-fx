@@ -19,7 +19,8 @@ public class SupplierRepository extends BaseRepository{
                 "st.name AS supplier_type, " +
                 "s.company_name " +
                 "FROM supplier s " +
-                "INNER JOIN supplier_type st ON s.type = st.id";
+                "INNER JOIN supplier_type st ON s.type = st.id " +
+                "WHERE s.is_active = true";
 
         try (Connection connection = getConnection();
              PreparedStatement ps = connection.prepareStatement(sql);
@@ -90,7 +91,7 @@ public class SupplierRepository extends BaseRepository{
 
 
     public boolean deleteSupplier(Integer id) {
-        String sql = "delete from supplier where id = ?";
+        String sql = "UPDATE supplier SET is_active = false WHERE id = ?";
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1,id);

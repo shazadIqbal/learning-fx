@@ -16,11 +16,13 @@ public class HelloApplication extends Application {
                 .getResource("login-view.fxml"));
 
         // scene with ui (fxml)
-        Scene scene = new Scene(fxmlLoader.load(), 600, 600);
+        Scene scene = new Scene(fxmlLoader.load());
         // stage title
         stage.setTitle("Stepway!");
         // set the scean into stage
         stage.setScene(scene);
+
+        stage.setMaximized(true);
         // show means view
         stage.show();
     }
