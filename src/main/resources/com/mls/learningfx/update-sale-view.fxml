@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="400.0" prefWidth="660.0"
+      spacing="10.0"
+      xmlns="http://javafx.com/javafx/11.0.2"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mls.learningfx.controller.UpdateSaleController">
+
+    <padding>
+        <Insets top="15.0" right="15.0" bottom="15.0" left="15.0" />
+    </padding>
+
+    <children>
+
+        <Label fx:id="invoiceLabel"
+               style="-fx-font-size: 16px;"
+               text="Invoice #" />
+
+        <!-- items of the sale -->
+        <TableView fx:id="itemsTable" VBox.vgrow="ALWAYS">
+
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+
+            <columns>
+
+                <TableColumn fx:id="productColumn" text="Product" />
+
+                <TableColumn fx:id="boughtColumn" text="Bought" />
+
+                <TableColumn fx:id="qtyColumn" text="Qty" />
+
+                <TableColumn fx:id="priceColumn" text="Price" />
+
+                <TableColumn fx:id="subTotalColumn" text="Subtotal" />
+
+                <TableColumn fx:id="actionColumn"
+                             minWidth="150.0"
+                             text="Actions" />
+
+            </columns>
+
+        </TableView>
+
+        <Label fx:id="refundLabel"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"
+               text="Refund: Rs. 0.00" />
+
+        <!-- buttons -->
+        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+
+            <children>
+
+                <Button text="Save"
+                        defaultButton="true"
+                        onAction="#handleSave"
+                        prefWidth="90.0" />
+
+                <Button text="Cancel"
+                        cancelButton="true"
+                        onAction="#handleCancel"
+                        prefWidth="90.0" />
+
+            </children>
+        </HBox>
+
+    </children>
+
+</VBox>
