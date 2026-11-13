@@ -8,6 +8,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.mls.learningfx.model.CustomerSaleHistory;
+import com.mls.learningfx.model.SaleRecord;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -253,4 +254,95 @@ public class SaleRepository extends BaseRepository {
         return BigDecimal.ZERO;
     }
 
+    // GET COMPLETE SALE RECORD BY SALE ID
+    public SaleRecord getSaleRecordById(int saleId) {
+
+        String sql =
+                "SELECT s.s_id, s.date, s.total_price, " +
+                        "COALESCE(pt.mode, 'N/A') AS payment_mode, " +
+                        "c.id AS cus_id, COALESCE(c.name, 'Walk-in Customer') AS cus_name, COALESCE(c.contact, 'N/A') AS cus_contact, " +
+                        "COALESCE(u.name, 'N/A') AS sold_by " +
+                        "FROM sale s " +
+                        "LEFT JOIN customer c ON s.cus_id = c.id " +
+                        "LEFT JOIN payment_type pt ON s.payment_type_id = pt.id " +
+                        "LEFT JOIN users u ON s.user_id = u.id " +
+                        "WHERE s.s_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, saleId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+
+                    String formattedDate = rs.getTimestamp("date") != null
+                            ? rs.getTimestamp("date")
+                            .toLocalDateTime()
+                            .format(DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a"))
+                            : "N/A";
+
+                    Customer customer = Customer.builder()
+                            .id((Integer) rs.getObject("cus_id"))
+                            .name(rs.getString("cus_name"))
+                            .contact(rs.getString("cus_contact"))
+                            .build();
+
+                    List<Item> items = getSaleItemsBySaleId(conn, saleId);
+
+                    return SaleRecord.builder()
+                            .saleId(rs.getInt("s_id"))
+                            .saleDate(formattedDate)
+                            .paymentMode(rs.getString("payment_mode"))
+                            .totalPrice(rs.getBigDecimal("total_price"))
+                            .customer(customer)
+                            .soldBy(rs.getString("sold_by"))
+                            .items(items)
+                            .build();
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch sale record: " + e.getMessage(), e);
+        }
+
+        return null;
+    }
+
+    private List<Item> getSaleItemsBySaleId(Connection conn, int saleId) throws SQLException {
+
+        List<Item> items = new ArrayList<>();
+
+        String sql =
+                "SELECT p.id AS product_id, p.name, si.qty, p.sell_price, " +
+                        "(si.qty * p.sell_price) AS sub_total " +
+                        "FROM sale_item si " +
+                        "JOIN product p ON si.p_id = p.id " +
+                        "WHERE si.s_id = ? " +
+                        "ORDER BY p.id";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, saleId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    items.add(
+                            Item.builder()
+                                    .productId(rs.getInt("product_id"))
+                                    .name(rs.getString("name"))
+                                    .quantity(rs.getInt("qty"))
+                                    .price(rs.getDouble("sell_price"))
+                                    .subTotal(rs.getDouble("sub_total"))
+                                    .build()
+                    );
+                }
+            }
+        }
+
+        return items;
+    }
+
 }
+

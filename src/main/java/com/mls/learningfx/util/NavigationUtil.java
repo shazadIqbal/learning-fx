@@ -18,6 +18,7 @@ public class NavigationUtil {
     public static final String REPORT_VIEW = "REPORT_VIEW";
     public static final String LOGIN ="LOGIN";
     public static final String CUSTOMER_VIEW = "CUSTOMER_VIEW";
+    public static final String SALE_RECORD_VIEW = "SALE_RECORD_VIEW";
 
     public static void navigate(Stage stage,String action) throws IOException {
 
@@ -37,7 +38,13 @@ public class NavigationUtil {
                 stage.setMaximized(true);
                 break;
             case SALE_VIEW:
-                loadView(stage,"sale-view.fxml");
+                if (stage.isMaximized() && stage.getScene() != null) {
+                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("sale-view.fxml"));
+                    stage.getScene().setRoot(fxmlLoader.load());
+                } else {
+                    loadView(stage,"sale-view.fxml");
+                    stage.setMaximized(true);
+                }
                 break;
             case LOGIN:
                 loadView(stage,"login-view.fxml");
@@ -50,6 +57,15 @@ public class NavigationUtil {
             case CUSTOMER_VIEW:
                 loadView(stage, "customer-view.fxml");
                 stage.setMaximized(true);
+                break;
+            case SALE_RECORD_VIEW:
+                if (stage.isMaximized() && stage.getScene() != null) {
+                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("sale-record-view.fxml"));
+                    stage.getScene().setRoot(fxmlLoader.load());
+                } else {
+                    loadView(stage, "sale-record-view.fxml");
+                    stage.setMaximized(true);
+                }
                 break;
         }
     }
@@ -70,3 +86,4 @@ public class NavigationUtil {
         stage.show();
     }
 }
+
