@@ -1,0 +1,1 @@
+ALTER TABLE supplier ADD COLUMN is_active BOOLEAN;

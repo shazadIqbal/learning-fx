@@ -31,14 +31,12 @@ public class SaleReportRepository extends BaseRepository {
                 String productName =
                         rs.getString("name");
 
-                int productId =
-                        rs.getInt("id");
 
                 int quantity =
                         rs.getInt("total_stock");
 
                 result.put(
-                        productName + " (ID: " + productId + ")",
+                        productName,
                         quantity
                 );
             }
@@ -133,8 +131,7 @@ public class SaleReportRepository extends BaseRepository {
                         "FROM sale_item si " +
                         "JOIN product p ON si.p_id = p.id " +
                         "GROUP BY p.id, p.name " +
-                        "ORDER BY total_sold DESC, p.id ASC " +
-                        "LIMIT 1";
+                        "ORDER BY total_sold DESC, p.id ASC ";
 
         Map<String, Integer> result = new LinkedHashMap<>();
 
@@ -146,14 +143,12 @@ public class SaleReportRepository extends BaseRepository {
                 String productName =
                         rs.getString("name");
 
-                int productId =
-                        rs.getInt("id");
 
                 int totalSold =
                         rs.getInt("total_sold");
 
                 result.put(
-                        productName + " (ID: " + productId + ")",
+                        productName,
                         totalSold
                 );
             }

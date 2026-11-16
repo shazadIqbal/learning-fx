@@ -4,6 +4,7 @@ import com.mls.learningfx.model.Customer;
 import com.mls.learningfx.model.Item;
 import com.mls.learningfx.repository.SaleRepository;
 import com.mls.learningfx.model.CustomerSaleHistory;
+import com.mls.learningfx.model.SaleRecord;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -46,4 +47,10 @@ public class SaleService {
         return saleRepository.getCustomerTotalSpendings(customerId);
     }
 
+    // GET SALE RECORD BY SALE ID
+    public SaleRecord getSaleRecordById(int saleId) {
+        return saleRepository.getSaleRecordById(saleId);
+    }
+
 }
+
