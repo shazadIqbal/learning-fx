@@ -11,13 +11,25 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 
 <BorderPane prefHeight="660.0" prefWidth="900.0" style="-fx-background-color: #f3f6fb;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mls.learningfx.controller.DashboardController">
     <top>
         <HBox alignment="CENTER_LEFT" spacing="16.0" style="-fx-background-color: white;">
             <padding><Insets bottom="22.0" left="34.0" right="34.0" top="22.0" /></padding>
             <children>
+                <StackPane alignment="TOP_RIGHT">
+                    <children>
+                        <Button fx:id="notificationBtn" onAction="#onNotificationClick" prefHeight="44.0" prefWidth="44.0" style="-fx-background-color: #eff6ff; -fx-border-color: #bfdbfe; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-cursor: hand;">
+                            <graphic>
+                                <SVGPath content="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="#2563eb" />
+                            </graphic>
+                        </Button>
+                        <Label fx:id="notificationBadge" alignment="CENTER" minHeight="20.0" minWidth="20.0" mouseTransparent="true" style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold; -fx-background-radius: 10px; -fx-padding: 1 5 1 5;" text="0" visible="false" />
+                    </children>
+                </StackPane>
                 <ImageView fitHeight="42.0" fitWidth="48.0" preserveRatio="true">
                     <image><Image url="@icon/box.png" /></image>
                 </ImageView>
@@ -39,8 +51,9 @@
                 <ColumnConstraints hgrow="ALWAYS" minWidth="190.0" percentWidth="33.34" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="170.0" percentHeight="50.0" vgrow="ALWAYS" />
-                <RowConstraints minHeight="170.0" percentHeight="50.0" vgrow="ALWAYS" />
+                <RowConstraints minHeight="140.0" percentHeight="33.33" vgrow="ALWAYS" />
+                <RowConstraints minHeight="140.0" percentHeight="33.33" vgrow="ALWAYS" />
+                <RowConstraints minHeight="140.0" percentHeight="33.34" vgrow="ALWAYS" />
             </rowConstraints>
             <children>
                 <Button fx:id="productBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#productView" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Products">
@@ -58,10 +71,14 @@
                 <Button fx:id="reportBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#reportView" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Reports" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <graphic><ImageView fitHeight="48.0" fitWidth="52.0" preserveRatio="true"><image><Image url="@icon/report.png" /></image></ImageView></graphic>
                 </Button>
-                <Button fx:id="logoutBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#logout" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Sign Out" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <Button fx:id="expiryReportBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#expiryReportView" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Expiry Report" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                    <graphic><ImageView fitHeight="48.0" fitWidth="52.0" preserveRatio="true"><image><Image url="@icon/expiry.png" /></image></ImageView></graphic>
+                </Button>
+                <Button fx:id="logoutBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#logout" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Sign Out" GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <graphic><ImageView fitHeight="44.0" fitWidth="48.0" preserveRatio="true"><image><Image url="@icon/logout.png" /></image></ImageView></graphic>
                 </Button>
             </children>
         </GridPane>
     </center>
 </BorderPane>
+

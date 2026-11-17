@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -22,5 +24,6 @@ public class Product {
     private String createdByName;
     private Integer quantity;
     private String barcode;
+    private LocalDate expiryDate;
 
 }

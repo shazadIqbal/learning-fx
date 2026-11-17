@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +48,9 @@ public class ProductViewController {
 
     @FXML
     private TableColumn<Product, Integer> stockColumn;
+
+    @FXML
+    private TableColumn<Product, LocalDate> expiryColumn;
 
     @FXML
     private TableColumn<Product, String> createdByColumn;
@@ -103,6 +107,10 @@ public class ProductViewController {
 
         stockColumn.setCellValueFactory(
                 new PropertyValueFactory<>("quantity")
+        );
+
+        expiryColumn.setCellValueFactory(
+                new PropertyValueFactory<>("expiryDate")
         );
 
         createdByColumn.setCellValueFactory(
@@ -373,6 +381,9 @@ public class ProductViewController {
         TextField priceField = new TextField();
         TextField sellPriceField = new TextField();
         TextField barcodeInputField = new TextField();
+        DatePicker expiryDatePicker = new DatePicker();
+        expiryDatePicker.setPromptText("Select Expiry Date");
+        expiryDatePicker.setMaxWidth(Double.MAX_VALUE);
 
         // for new product only
         TextField stockField = new TextField();
@@ -402,6 +413,7 @@ public class ProductViewController {
 
             categoryBox.setValue(product.getCategoryId());
             barcodeInputField.setText(product.getBarcode());
+            expiryDatePicker.setValue(product.getExpiryDate());
         }
 
         VBox vbox = new VBox(10);
@@ -423,7 +435,10 @@ public class ProductViewController {
                 sellPriceField,
 
                 new Label("Barcode"),
-                barcodeInputField
+                barcodeInputField,
+
+                new Label("Expiry Date"),
+                expiryDatePicker
         );
 
         if (!isEdit) {
@@ -524,7 +539,8 @@ public class ProductViewController {
                             categoryBox.getValue(),
                             price,
                             sellPrice,
-                            barcode
+                            barcode,
+                            expiryDatePicker.getValue()
                     );
 
                 } else {
@@ -542,7 +558,8 @@ public class ProductViewController {
                             price,
                             sellPrice,
                             loggedInUserId,
-                            barcode
+                            barcode,
+                            expiryDatePicker.getValue()
                     );
 
                     saved = newProductId != null;
@@ -672,3 +689,4 @@ public class ProductViewController {
         alert.showAndWait();
     }
 }
+
