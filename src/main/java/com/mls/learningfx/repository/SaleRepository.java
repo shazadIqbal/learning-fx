@@ -64,23 +64,59 @@ public class SaleRepository extends BaseRepository {
             return saleId;
 
         } catch (Exception e) {
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException rollbackEx) {
-                    rollbackEx.printStackTrace();
-                }
-            }
+            rollback(conn);
             throw new RuntimeException(e.getMessage(), e);
 
         } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                    conn.close();
-                } catch (SQLException closeEx) {
-                    closeEx.printStackTrace();
-                }
+            close(conn);
+        }
+    }
+
+    // change items of an old sale
+    public void updateSale(int saleId, double totalPrice, List<Item> items,
+                           List<Item> soldMore, List<Item> returned) {
+
+        Connection conn = null;
+
+        try {
+            conn = getConnection();
+            conn.setAutoCommit(false);
+
+            updateStockForItems(conn, soldMore);
+            returnStockForItems(conn, returned);
+
+            deleteSaleItems(conn, saleId);
+            insertSaleItems(conn, saleId, items);
+            updateSaleTotal(conn, saleId, totalPrice);
+
+            conn.commit();
+
+        } catch (Exception e) {
+            rollback(conn);
+            throw new RuntimeException(e.getMessage(), e);
+
+        } finally {
+            close(conn);
+        }
+    }
+
+    private void rollback(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+        }
+    }
+
+    private void close(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException closeEx) {
+                closeEx.printStackTrace();
             }
         }
     }
@@ -170,6 +206,45 @@ public class SaleRepository extends BaseRepository {
                     throw new SQLException("Stock record not found for product: " + item.getName());
                 }
             }
+        }
+    }
+
+    // put qty back in the latest stock row of the product
+    private void returnStockForItems(Connection conn, List<Item> items) throws SQLException {
+        String sql = "UPDATE stock SET qty = qty + ? " +
+                "WHERE id = (SELECT MAX(id) FROM stock WHERE product_id = ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (Item item : items) {
+                ps.setInt(1, item.getQuantity());
+                ps.setInt(2, item.getProductId());
+                ps.executeUpdate();
+            }
+        }
+    }
+
+    private void deleteSaleItems(Connection conn, int saleId) throws SQLException {
+        String sql = "DELETE FROM sale_item WHERE s_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, saleId);
+            ps.executeUpdate();
+        }
+    }
+
+    private void updateSaleTotal(Connection conn, int saleId, double totalPrice) throws SQLException {
+        String sql = "UPDATE sale SET total_price = ? WHERE s_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBigDecimal(1, BigDecimal.valueOf(totalPrice));
+            ps.setInt(2, saleId);
+            ps.executeUpdate();
+        }
+    }
+
+    // items of an old sale
+    public List<Item> getSaleItems(int saleId) {
+        try (Connection conn = getConnection()) {
+            return getSaleItemsBySaleId(conn, saleId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch sale items: " + e.getMessage(), e);
         }
     }
 
