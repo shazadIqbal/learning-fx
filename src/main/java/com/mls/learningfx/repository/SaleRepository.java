@@ -128,7 +128,7 @@ public class SaleRepository extends BaseRepository {
                 "WHERE s_id=?" +
                 "AND credit_settled = FALSE" +
                 "AND payment_type_id=(" +
-                "SELECT id FROM payment_type WHERE mode = 'Credit)";
+                "SELECT id FROM payment_type WHERE mode = 'Credit'";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)){
             ps.setInt(1,saleId);
