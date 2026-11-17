@@ -52,5 +52,10 @@ public class SaleService {
         return saleRepository.getSaleRecordById(saleId);
     }
 
+    // UPDATE ITEMS OF AN OLD SALE
+    public void updateSale(int saleId, double totalPrice, List<Item> items) {
+        saleRepository.updateSale(saleId, totalPrice, items);
+    }
+
 }
 

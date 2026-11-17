@@ -64,23 +64,59 @@ public class SaleRepository extends BaseRepository {
             return saleId;
 
         } catch (Exception e) {
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException rollbackEx) {
-                    rollbackEx.printStackTrace();
-                }
-            }
+            rollback(conn);
             throw new RuntimeException(e.getMessage(), e);
 
         } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                    conn.close();
-                } catch (SQLException closeEx) {
-                    closeEx.printStackTrace();
-                }
+            close(conn);
+        }
+    }
+
+    // change items of an old sale
+    public void updateSale(int saleId, double totalPrice, List<Item> items) {
+
+        Connection conn = null;
+
+        try {
+            conn = getConnection();
+            conn.setAutoCommit(false);
+
+            List<Item> oldItems = getSaleItemsBySaleId(conn, saleId);
+
+            updateStockForChanges(conn, oldItems, items);
+
+            deleteSaleItems(conn, saleId);
+            insertSaleItems(conn, saleId, items);
+            updateSaleTotal(conn, saleId, totalPrice);
+
+            conn.commit();
+
+        } catch (Exception e) {
+            rollback(conn);
+            throw new RuntimeException(e.getMessage(), e);
+
+        } finally {
+            close(conn);
+        }
+    }
+
+    private void rollback(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+        }
+    }
+
+    private void close(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException closeEx) {
+                closeEx.printStackTrace();
             }
         }
     }
@@ -171,6 +207,82 @@ public class SaleRepository extends BaseRepository {
                 }
             }
         }
+    }
+
+    // only the difference goes in or out of stock
+    private void updateStockForChanges(Connection conn, List<Item> oldItems, List<Item> newItems) throws SQLException {
+
+        List<Item> soldMore = new ArrayList<>();
+        List<Item> returned = new ArrayList<>();
+
+        // items added or qty changed
+        for (Item newItem : newItems) {
+            int change = newItem.getQuantity() - getQty(oldItems, newItem.getProductId());
+
+            if (change > 0) {
+                soldMore.add(copyWithQty(newItem, change));
+            } else if (change < 0) {
+                returned.add(copyWithQty(newItem, -change));
+            }
+        }
+
+        // items removed from the sale
+        for (Item oldItem : oldItems) {
+            if (getQty(newItems, oldItem.getProductId()) == 0) {
+                returned.add(oldItem);
+            }
+        }
+
+        updateStockForItems(conn, soldMore);
+        returnStockForItems(conn, returned);
+    }
+
+    // put qty back in the latest stock row of the product
+    private void returnStockForItems(Connection conn, List<Item> items) throws SQLException {
+        String sql = "UPDATE stock SET qty = qty + ? " +
+                "WHERE id = (SELECT MAX(id) FROM stock WHERE product_id = ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (Item item : items) {
+                ps.setInt(1, item.getQuantity());
+                ps.setInt(2, item.getProductId());
+                ps.executeUpdate();
+            }
+        }
+    }
+
+    private void deleteSaleItems(Connection conn, int saleId) throws SQLException {
+        String sql = "DELETE FROM sale_item WHERE s_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, saleId);
+            ps.executeUpdate();
+        }
+    }
+
+    private void updateSaleTotal(Connection conn, int saleId, double totalPrice) throws SQLException {
+        String sql = "UPDATE sale SET total_price = ? WHERE s_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBigDecimal(1, BigDecimal.valueOf(totalPrice));
+            ps.setInt(2, saleId);
+            ps.executeUpdate();
+        }
+    }
+
+    // qty of a product in a list, 0 if not there
+    private int getQty(List<Item> items, Integer productId) {
+        for (Item item : items) {
+            if (item.getProductId().equals(productId)) {
+                return item.getQuantity();
+            }
+        }
+        return 0;
+    }
+
+    private Item copyWithQty(Item item, int qty) {
+        return Item.builder()
+                .productId(item.getProductId())
+                .name(item.getName())
+                .quantity(qty)
+                .build();
     }
 
     // GET CUSTOMER SALE HISTORY
