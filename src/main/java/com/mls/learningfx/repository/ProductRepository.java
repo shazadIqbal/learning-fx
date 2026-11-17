@@ -75,12 +75,22 @@ public class ProductRepository extends BaseRepository {
     public boolean addStock(int productId, int qty,
                             Integer supplierId, Integer createdBy) {
 
-        String sql = "INSERT INTO stock " +
-                "(qty, created_by, product_id, supplier_id) " +
-                "VALUES (?, ?, ?, ?)";
+        // update qty in the product's stock row
+        String updateSql = "UPDATE stock SET qty = qty + ?, " +
+                "supplier_id = ?, date = CURRENT_TIMESTAMP " +
+                "WHERE id = (SELECT MAX(id) FROM stock WHERE product_id = ?)";
 
-        int rows = executeUpdate(sql, qty, createdBy,
-                productId, supplierId);
+        int rows = executeUpdate(updateSql, qty, supplierId, productId);
+
+        // in case of no stock row
+        if (rows == 0) {
+            String insertSql = "INSERT INTO stock " +
+                    "(qty, created_by, product_id, supplier_id) " +
+                    "VALUES (?, ?, ?, ?)";
+
+            rows = executeUpdate(insertSql, qty, createdBy,
+                    productId, supplierId);
+        }
 
         return rows > 0;
     }
