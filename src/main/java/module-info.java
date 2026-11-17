@@ -13,6 +13,7 @@ module com.mls.learningfx {
     requires static lombok;
     requires com.github.librepdf.openpdf;
     requires javafx.base;
+    requires flyway.core;
 
     // Reflection Openings for JavaFX
     opens com.mls.learningfx to javafx.fxml;

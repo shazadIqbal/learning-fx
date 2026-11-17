@@ -1,5 +1,6 @@
 package com.mls.learningfx;
 
+import com.mls.learningfx.config.DatabaseMigration;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -28,5 +29,7 @@ public class HelloApplication extends Application {
         stage.setMaximized(true);
 
         stage.show();
+
+        DatabaseMigration.migrate();
     }
 }
