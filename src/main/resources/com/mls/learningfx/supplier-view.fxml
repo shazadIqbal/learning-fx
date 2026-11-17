@@ -29,7 +29,7 @@
                   <Insets left="10.0" top="20.0" />
                </HBox.margin>
             </Button>
-            <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#addSupplier" text="ADD SUPPLIER">
+            <Button fx:id="addSupplierButton" minWidth="-Infinity" mnemonicParsing="false" onAction="#addSupplier" text="ADD SUPPLIER">
                <HBox.margin>
                   <Insets left="20.0" top="20.0" />
                </HBox.margin>

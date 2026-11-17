@@ -1,6 +1,7 @@
 
 package com.mls.learningfx.service;
 
+import com.mls.learningfx.model.Role;
 import com.mls.learningfx.model.User;
 import com.mls.learningfx.repository.UserRepository;
 
@@ -28,5 +29,9 @@ public class UserService {
         }
 
         return null;
+    }
+
+    public static boolean isAdmin() {
+        return Role.ADMIN.equals(loggedInUser.getRole());
     }
 }

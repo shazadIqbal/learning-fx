@@ -119,6 +119,13 @@ public class ProductViewController {
 
         backButton.setOnAction(e -> backToDashboard());
 
+        // only admin can add, edit, delete and update stock
+        if (!UserService.isAdmin()) {
+            addProductButton.setVisible(false);
+            updateStockButton.setVisible(false);
+            actionColumn.setVisible(false);
+        }
+
         searchField.textProperty().addListener(
                 (observable, oldValue, newValue) -> searchProducts()
         );

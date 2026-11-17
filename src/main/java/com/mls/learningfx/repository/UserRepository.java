@@ -1,5 +1,6 @@
 package com.mls.learningfx.repository;
 
+import com.mls.learningfx.model.Role;
 import com.mls.learningfx.model.User;
 
 import java.sql.*;
@@ -13,7 +14,8 @@ public class UserRepository extends BaseRepository {
         List<User> userList = new ArrayList<>();
         Connection connection = getConnection();
 
-        String sql = "select * from users";
+        String sql = "select u.*, r.name as role_name from users u " +
+                "join user_role r on u.role_id = r.id";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -23,7 +25,8 @@ public class UserRepository extends BaseRepository {
                         rs.getString("name"),
                         rs.getString("contact"),
                         rs.getString("email"),
-                        rs.getString("password")
+                        rs.getString("password"),
+                        Role.valueOf(rs.getString("role_name"))
                 ));
             }
         } catch (SQLException e) {
@@ -35,7 +38,9 @@ public class UserRepository extends BaseRepository {
     public User login(String email,String password){
         Connection connection = getConnection();
 
-        String sql = "select * from users where email = ? and password = ?";
+        String sql = "select u.*, r.name as role_name from users u " +
+                "join user_role r on u.role_id = r.id " +
+                "where u.email = ? and u.password = ?";
 
         try {
 
@@ -46,6 +51,7 @@ public class UserRepository extends BaseRepository {
                                 .name(rs.getString("name"))
                                 .contact( rs.getString("contact"))
                                 .email(rs.getString("email"))
+                                .role(Role.valueOf(rs.getString("role_name")))
                                 .build();
 
 

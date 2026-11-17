@@ -1,0 +1,13 @@
+CREATE TABLE user_role (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+INSERT INTO user_role (name) VALUES ('ADMIN'), ('SALES_AGENT');
+
+ALTER TABLE users ADD COLUMN role_id INTEGER REFERENCES user_role(id);
+
+UPDATE users SET role_id = 2;
+UPDATE users SET role_id = 1 WHERE id = 2;
+
+ALTER TABLE users ALTER COLUMN role_id SET NOT NULL;
