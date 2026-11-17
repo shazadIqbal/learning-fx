@@ -39,8 +39,9 @@
                 <ColumnConstraints hgrow="ALWAYS" minWidth="190.0" percentWidth="33.34" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="170.0" percentHeight="50.0" vgrow="ALWAYS" />
-                <RowConstraints minHeight="170.0" percentHeight="50.0" vgrow="ALWAYS" />
+                <RowConstraints minHeight="150.0" percentHeight="33.33" vgrow="ALWAYS" />
+                <RowConstraints minHeight="150.0" percentHeight="33.33" vgrow="ALWAYS" />
+                <RowConstraints minHeight="150.0" percentHeight="33.34" vgrow="ALWAYS" />
             </rowConstraints>
             <children>
                 <Button fx:id="productBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#productView" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Products">
@@ -60,6 +61,9 @@
                 </Button>
                 <Button fx:id="logoutBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#logout" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Sign Out" GridPane.columnIndex="2" GridPane.rowIndex="1">
                     <graphic><ImageView fitHeight="44.0" fitWidth="48.0" preserveRatio="true"><image><Image url="@icon/logout.png" /></image></ImageView></graphic>
+                </Button>
+                <Button fx:id="adminBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#adminView" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Admin Panel" GridPane.rowIndex="2">
+                    <graphic><ImageView fitHeight="48.0" fitWidth="52.0" preserveRatio="true"><image><Image url="@icon/admin.png" /></image></ImageView></graphic>
                 </Button>
             </children>
         </GridPane>
