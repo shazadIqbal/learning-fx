@@ -73,7 +73,8 @@ public class SaleRepository extends BaseRepository {
     }
 
     // change items of an old sale
-    public void updateSale(int saleId, double totalPrice, List<Item> items) {
+    public void updateSale(int saleId, double totalPrice, List<Item> items,
+                           List<Item> soldMore, List<Item> returned) {
 
         Connection conn = null;
 
@@ -81,9 +82,8 @@ public class SaleRepository extends BaseRepository {
             conn = getConnection();
             conn.setAutoCommit(false);
 
-            List<Item> oldItems = getSaleItemsBySaleId(conn, saleId);
-
-            updateStockForChanges(conn, oldItems, items);
+            updateStockForItems(conn, soldMore);
+            returnStockForItems(conn, returned);
 
             deleteSaleItems(conn, saleId);
             insertSaleItems(conn, saleId, items);
@@ -209,34 +209,6 @@ public class SaleRepository extends BaseRepository {
         }
     }
 
-    // only the difference goes in or out of stock
-    private void updateStockForChanges(Connection conn, List<Item> oldItems, List<Item> newItems) throws SQLException {
-
-        List<Item> soldMore = new ArrayList<>();
-        List<Item> returned = new ArrayList<>();
-
-        // items added or qty changed
-        for (Item newItem : newItems) {
-            int change = newItem.getQuantity() - getQty(oldItems, newItem.getProductId());
-
-            if (change > 0) {
-                soldMore.add(copyWithQty(newItem, change));
-            } else if (change < 0) {
-                returned.add(copyWithQty(newItem, -change));
-            }
-        }
-
-        // items removed from the sale
-        for (Item oldItem : oldItems) {
-            if (getQty(newItems, oldItem.getProductId()) == 0) {
-                returned.add(oldItem);
-            }
-        }
-
-        updateStockForItems(conn, soldMore);
-        returnStockForItems(conn, returned);
-    }
-
     // put qty back in the latest stock row of the product
     private void returnStockForItems(Connection conn, List<Item> items) throws SQLException {
         String sql = "UPDATE stock SET qty = qty + ? " +
@@ -267,22 +239,13 @@ public class SaleRepository extends BaseRepository {
         }
     }
 
-    // qty of a product in a list, 0 if not there
-    private int getQty(List<Item> items, Integer productId) {
-        for (Item item : items) {
-            if (item.getProductId().equals(productId)) {
-                return item.getQuantity();
-            }
+    // items of an old sale
+    public List<Item> getSaleItems(int saleId) {
+        try (Connection conn = getConnection()) {
+            return getSaleItemsBySaleId(conn, saleId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch sale items: " + e.getMessage(), e);
         }
-        return 0;
-    }
-
-    private Item copyWithQty(Item item, int qty) {
-        return Item.builder()
-                .productId(item.getProductId())
-                .name(item.getName())
-                .quantity(qty)
-                .build();
     }
 
     // GET CUSTOMER SALE HISTORY
