@@ -20,7 +20,8 @@ public class CustomerRepository extends BaseRepository {
         List<Customer> customerList = new ArrayList<>();
 
         String sql = "SELECT * FROM customer " +
-                "WHERE name ILIKE ? OR contact ILIKE ? " +
+                "WHERE is_active = TRUE " +
+                "AND (name ILIKE ? OR contact ILIKE ?) " +
                 "ORDER BY id";
 
         try {
@@ -70,7 +71,7 @@ public class CustomerRepository extends BaseRepository {
             String name,
             String contact) {
 
-        String sql = "UPDATE customer SET name = ?, contact = ? WHERE id = ?";
+        String sql = "UPDATE customer SET name = ?, contact = ? WHERE id = ? AND is_active = TRUE";
 
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -89,17 +90,24 @@ public class CustomerRepository extends BaseRepository {
     // DELETE CUSTOMER
     public boolean deleteCustomerById(Integer id) {
 
-        String sql = "DELETE FROM customer WHERE id = ?";
+        String sql = "UPDATE customer SET is_active = FALSE WHERE id = ?";
 
-        try {
-            PreparedStatement ps = getConnection().prepareStatement(sql);
+        int rows = executeUpdate(sql, id);
 
-            ps.setInt(1, id);
+        return rows > 0;
 
-            return ps.executeUpdate() > 0;
+//        String sql = "DELETE FROM customer WHERE id = ?";
+//
+//        try {
+//            PreparedStatement ps = getConnection().prepareStatement(sql);
+//
+//            ps.setInt(1, id);
+//
+//            return ps.executeUpdate() > 0;
+//
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

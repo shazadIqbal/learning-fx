@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TableCell;
 
 public class CustomerHistoryController {
     @FXML
@@ -63,6 +65,8 @@ public class CustomerHistoryController {
 
     private final SaleService saleService = new SaleService();
 
+    private Integer currentCustomerId;
+
     @FXML
     public void initialize() {
 
@@ -85,6 +89,64 @@ public class CustomerHistoryController {
         totalColumn.setCellValueFactory(
                 new PropertyValueFactory<>("totalPrice")
         );
+
+        TableColumn<CustomerSaleHistory, Void> actionColumn =
+                new TableColumn<>("Action");
+
+        actionColumn.setCellFactory(column -> new TableCell<>() {
+
+            private final Button paidButton = new Button("Mark as Paid");
+
+            {
+                paidButton.setOnAction(event -> {
+                    CustomerSaleHistory sale =
+                            getTableView().getItems().get(getIndex());
+
+                    try {
+                        boolean updated = saleService.markCreditSaleAsSettled(
+                                sale.getSaleId()
+                        );
+
+                        if (updated) {
+                            loadHistory(currentCustomerId);
+                        }
+
+                    } catch (RuntimeException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Settlement Error");
+                        alert.setHeaderText("Unable to settle credit sale");
+                        alert.setContentText(e.getMessage());
+                        alert.showAndWait();
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    CustomerSaleHistory sale =
+                            getTableView().getItems().get(getIndex());
+
+                    boolean isCredit =
+                            "Credit".equalsIgnoreCase(sale.getPaymentMode());
+
+                    boolean isSettled =
+                            Boolean.TRUE.equals(sale.getCreditSettled());
+
+                    if (isCredit && !isSettled) {
+                        setGraphic(paidButton);
+                    } else {
+                        setGraphic(null);
+                    }
+                }
+            }
+        });
+
+        historyTable.getColumns().add(actionColumn);
     }
 
     // LOAD SELECTED CUSTOMER HISTORY
@@ -99,6 +161,8 @@ public class CustomerHistoryController {
         customerContactLabel.setText(
                 "Contact: " + customer.getContact()
         );
+
+        currentCustomerId = customer.getId();
 
         loadHistory(customer.getId());
     }

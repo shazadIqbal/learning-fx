@@ -426,10 +426,10 @@ public class SaleViewController {
         }
 
         // 3. Ask Payment Type (online or Cash)
-        ChoiceDialog<String> paymentDialog = new ChoiceDialog<>("Cash", "Cash", "online");
+        ChoiceDialog<String> paymentDialog = new ChoiceDialog<>("Cash", "Cash", "online","Credit");
         paymentDialog.setTitle("Payment Type");
         paymentDialog.setHeaderText("Select Payment Method");
-        paymentDialog.setContentText("Payment Type (online or Cash):");
+        paymentDialog.setContentText("Payment Type (online, Cash or Credit):");
 
         Optional<String> paymentResult = paymentDialog.showAndWait();
         if (paymentResult.isEmpty()) {

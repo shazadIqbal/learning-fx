@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="650" prefWidth="1000" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mls.learningfx.controller.CustomerHistoryController">
+<BorderPane prefHeight="650" prefWidth="10000" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mls.learningfx.controller.CustomerHistoryController">
 
     <top>
         <VBox spacing="15">
@@ -62,15 +62,15 @@
 
                 <columns>
 
-                    <TableColumn fx:id="saleIdColumn" prefWidth="75" text="Sale ID" />
+                    <TableColumn fx:id="saleIdColumn" prefWidth="59.200011074543" text="Sale ID" />
 
-                    <TableColumn fx:id="dateColumn" prefWidth="160" text="Purchase Date" />
+                    <TableColumn fx:id="dateColumn" prefWidth="124.00003433227539" text="Purchase Date" />
 
-                    <TableColumn fx:id="paymentColumn" prefWidth="120" text="Payment Method" />
+                    <TableColumn fx:id="paymentColumn" prefWidth="116.00001525878906" text="Payment Method" />
 
-                    <TableColumn fx:id="itemsColumn" prefWidth="400" text="Purchased Items" />
+                    <TableColumn fx:id="itemsColumn" prefWidth="295.9999694824219" text="Purchased Items" />
 
-                    <TableColumn fx:id="totalColumn" prefWidth="150" text="Total (Rs.)" />
+                    <TableColumn fx:id="totalColumn" prefWidth="211.9998779296875" text="Total (Rs.)" />
 
                 </columns>
 
