@@ -1,3 +1,4 @@
+
 package com.mls.learningfx.repository;
 
 import com.mls.learningfx.model.Role;
@@ -15,7 +16,9 @@ public class UserRepository extends BaseRepository {
         Connection connection = getConnection();
 
         String sql = "select u.*, r.name as role_name from users u " +
-                "join user_role r on u.role_id = r.id";
+                "join user_role r on u.role_id = r.id " +
+                "where u.is_active = true " +
+                "order by u.id";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -40,7 +43,7 @@ public class UserRepository extends BaseRepository {
 
         String sql = "select u.*, r.name as role_name from users u " +
                 "join user_role r on u.role_id = r.id " +
-                "where u.email = ? and u.password = ?";
+                "where u.email = ? and u.password = ? and u.is_active = true";
 
         try {
 
@@ -63,6 +66,41 @@ public class UserRepository extends BaseRepository {
 
         return null;
 
+    }
+
+    public boolean addUser(User user) {
+
+        String sql = "INSERT INTO users " +
+                "(name, contact, email, password, role_id) " +
+                "VALUES (?, ?, ?, ?, (SELECT id FROM user_role WHERE name = ?))";
+
+        int rows = executeUpdate(sql, user.getName(), user.getContact(),
+                user.getEmail(), user.getPassword(), user.getRole().name());
+
+        return rows > 0;
+    }
+
+    public boolean updateUser(User user) {
+
+        String sql = "UPDATE users SET name = ?, contact = ?, email = ?, " +
+                "password = ?, role_id = (SELECT id FROM user_role WHERE name = ?) " +
+                "WHERE id = ?";
+
+        int rows = executeUpdate(sql, user.getName(), user.getContact(),
+                user.getEmail(), user.getPassword(), user.getRole().name(),
+                user.getId().intValue());
+
+        return rows > 0;
+    }
+
+    // hide the user, do not remove it
+    public boolean deleteUser(int id) {
+
+        String sql = "UPDATE users SET is_active = FALSE WHERE id = ?";
+
+        int rows = executeUpdate(sql, id);
+
+        return rows > 0;
     }
 
 

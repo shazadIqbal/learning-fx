@@ -1,5 +1,6 @@
 package com.mls.learningfx.controller;
 
+import com.mls.learningfx.service.UserService;
 import com.mls.learningfx.util.NavigationUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,6 +24,16 @@ public class DashboardController {
     private Button logoutBtn;
     @FXML
     private Button customerBtn;
+    @FXML
+    private Button adminBtn;
+
+    @FXML
+    public void initialize() {
+        // only admin can see the admin panel
+        if (!UserService.isAdmin()) {
+            adminBtn.setVisible(false);
+        }
+    }
 
     @FXML
     public void productView(){
@@ -71,6 +82,17 @@ public class DashboardController {
         Stage stage = (Stage) customerBtn.getScene().getWindow();
         try {
             NavigationUtil.navigate(stage,CUSTOMER_VIEW);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @FXML
+    public void adminView(){
+        Stage stage = (Stage) adminBtn.getScene().getWindow();
+        try {
+            NavigationUtil.navigate(stage,ADMIN_VIEW);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

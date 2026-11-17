@@ -19,6 +19,7 @@ public class NavigationUtil {
     public static final String LOGIN ="LOGIN";
     public static final String CUSTOMER_VIEW = "CUSTOMER_VIEW";
     public static final String SALE_RECORD_VIEW = "SALE_RECORD_VIEW";
+    public static final String ADMIN_VIEW = "ADMIN_VIEW";
 
     public static void navigate(Stage stage,String action) throws IOException {
 
@@ -66,6 +67,10 @@ public class NavigationUtil {
                     loadView(stage, "sale-record-view.fxml");
                     stage.setMaximized(true);
                 }
+                break;
+            case ADMIN_VIEW:
+                loadView(stage, "admin-view.fxml");
+                stage.setMaximized(true);
                 break;
         }
     }
