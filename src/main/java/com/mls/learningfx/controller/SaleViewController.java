@@ -4,6 +4,7 @@ package com.mls.learningfx.controller;
 import com.mls.learningfx.model.Customer;
 import com.mls.learningfx.model.Item;
 import com.mls.learningfx.model.Product;
+import com.mls.learningfx.model.SaleRecord;
 import com.mls.learningfx.model.Supplier;
 import com.mls.learningfx.service.ProductService;
 import com.mls.learningfx.service.SaleReportService;
@@ -26,7 +27,9 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.mls.learningfx.util.NavigationUtil.DASHBOARD;
@@ -85,6 +88,17 @@ public class SaleViewController {
     @FXML
     public Label grandTotalLabel;
 
+    @FXML
+    private Button checkoutButton;
+
+    @FXML
+    private Label pageTitleLabel;
+
+    // sale being updated, null for a new sale
+    private Integer editingSaleId = null;
+
+    // qty of each product in the sale before update
+    private final Map<Integer, Integer> originalQtys = new HashMap<>();
 
     private final ProductService productService = new ProductService();
     private final SaleReportService saleReportService = new SaleReportService();
@@ -196,7 +210,7 @@ public class SaleViewController {
                 .findFirst()
                 .orElse(null);
 
-        if (product == null || item.getQuantity() >= product.getQuantity()) {
+        if (product == null || item.getQuantity() >= getAvailableStock(product)) {
             showAlert(Alert.AlertType.WARNING,
                     "Stock Limit", "No more stock available.");
             return;
@@ -335,7 +349,7 @@ public class SaleViewController {
 
             Integer inputQty = Integer.parseInt(qty);
 
-            if(product.getQuantity() > inputQty){
+            if(getAvailableStock(product) > inputQty){
 
 
 
@@ -389,6 +403,11 @@ public class SaleViewController {
             return;
         }
 
+        if (editingSaleId != null) {
+            saveSaleUpdate();
+            return;
+        }
+
         // 1. Ask Customer Phone Number
         TextInputDialog phoneDialog = new TextInputDialog();
         phoneDialog.setTitle("Customer Phone");
@@ -438,9 +457,7 @@ public class SaleViewController {
         String selectedPaymentMode = paymentResult.get();
 
         // 4. Calculate total sale price
-        double totalPrice = itemObservableList.stream()
-                .mapToDouble(Item::getSubTotal)
-                .sum();
+        double totalPrice = getTotalPrice();
 
         // 5. Call SaleService -> SaleRepository to execute the 3-step SQL Transaction
         try {
@@ -458,9 +475,7 @@ public class SaleViewController {
                             + "\nPayment Mode: " + selectedPaymentMode
                             + "\nTotal Price: Rs. " + String.format("%.2f", totalPrice));
 
-            itemObservableList.clear();
-            refreshTable();
-            getAllProducts();
+            resetSale();
 
         } catch (RuntimeException e) {
             showAlert(Alert.AlertType.ERROR, "Checkout Failed",
@@ -532,6 +547,105 @@ public class SaleViewController {
             showAlert(Alert.AlertType.ERROR, "Report Failed",
                     "Could not create PDF: " + e.getMessage());
         }
+    }
+
+    @FXML
+    private void handleUpdateSale(ActionEvent event) {
+
+        TextInputDialog invoiceDialog = new TextInputDialog();
+        invoiceDialog.setTitle("Update Sale");
+        invoiceDialog.setHeaderText("Enter Invoice Number");
+        invoiceDialog.setContentText("Invoice No:");
+
+        Optional<String> invoiceResult = invoiceDialog.showAndWait();
+        if (invoiceResult.isEmpty()) {
+            return;
+        }
+
+        int saleId;
+        try {
+            saleId = Integer.parseInt(invoiceResult.get().trim());
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.WARNING, "Invalid Invoice",
+                    "Invoice number must be a number.");
+            return;
+        }
+
+        SaleRecord record;
+        try {
+            record = saleService.getSaleRecordById(saleId);
+        } catch (RuntimeException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
+            return;
+        }
+
+        if (record == null) {
+            showAlert(Alert.AlertType.WARNING, "Not Found",
+                    "No sale found for invoice #" + saleId + ".");
+            return;
+        }
+
+        loadSaleForUpdate(record);
+    }
+
+    // show the old sale items in the selected items table
+    private void loadSaleForUpdate(SaleRecord record) {
+
+        editingSaleId = record.getSaleId();
+        originalQtys.clear();
+        itemObservableList.clear();
+
+        for (Item item : record.getItems()) {
+            originalQtys.put(item.getProductId(), item.getQuantity());
+            itemObservableList.add(item);
+        }
+
+        selectedItemsTable.setItems(itemObservableList);
+        refreshTable();
+
+        pageTitleLabel.setText("Update Sale #" + editingSaleId);
+        checkoutButton.setText("Update Sale");
+    }
+
+    private void saveSaleUpdate() {
+
+        double totalPrice = getTotalPrice();
+
+        try {
+            saleService.updateSale(editingSaleId, totalPrice, itemObservableList);
+
+            showAlert(Alert.AlertType.INFORMATION, "Sale Updated",
+                    "Sale #" + editingSaleId + " updated successfully!"
+                            + "\nNew Total: Rs. " + String.format("%.2f", totalPrice));
+
+            resetSale();
+
+        } catch (RuntimeException e) {
+            showAlert(Alert.AlertType.ERROR, "Update Failed",
+                    "Transaction rolled back due to an error:\n" + e.getMessage());
+        }
+    }
+
+    // stock the user can still sell
+    private int getAvailableStock(Product product) {
+        return product.getQuantity() + originalQtys.getOrDefault(product.getId(), 0);
+    }
+
+    private double getTotalPrice() {
+        return itemObservableList.stream()
+                .mapToDouble(Item::getSubTotal)
+                .sum();
+    }
+
+    // back to a new empty sale
+    private void resetSale() {
+        editingSaleId = null;
+        originalQtys.clear();
+        itemObservableList.clear();
+        refreshTable();
+        getAllProducts();
+        pageTitleLabel.setText("Create New Sale");
+        checkoutButton.setText("Checkout");
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {

@@ -22,9 +22,17 @@
                 <Insets bottom="15" left="25" right="25" top="20" />
             </padding>
 
-            <Button fx:id="viewSaleRecordButton" onAction="#handleViewSaleRecord" prefHeight="38" prefWidth="160" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="View Sale Record" />
+            <HBox alignment="CENTER_LEFT">
 
-            <Label style="-fx-font-size: 25px; -fx-font-weight: bold;" text="Create New Sale" />
+                <Button fx:id="viewSaleRecordButton" onAction="#handleViewSaleRecord" prefHeight="38" prefWidth="160" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="View Sale Record" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Button fx:id="updateSaleButton" onAction="#handleUpdateSale" prefHeight="38" prefWidth="160" style="-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Update Sale" />
+
+            </HBox>
+
+            <Label fx:id="pageTitleLabel" style="-fx-font-size: 25px; -fx-font-weight: bold;" text="Create New Sale" />
 
             <HBox alignment="CENTER_LEFT" spacing="10">
 
