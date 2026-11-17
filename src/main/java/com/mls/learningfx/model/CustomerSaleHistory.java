@@ -18,6 +18,8 @@ import java.math.BigDecimal;
         private String paymentMode;
         private BigDecimal totalPrice;
         private String purchasedItems;
+        private Boolean creditSettled;
+
     }
 
 

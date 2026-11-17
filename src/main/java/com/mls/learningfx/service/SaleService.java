@@ -52,5 +52,10 @@ public class SaleService {
         return saleRepository.getSaleRecordById(saleId);
     }
 
+    //mark credit as settleed
+    public boolean markCreditSaleAsSettled(int saleId){
+        return saleRepository.markCreditSaleAsSettled(saleId);
+    }
+
 }
 

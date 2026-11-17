@@ -14,8 +14,11 @@ import java.util.ArrayList;
 
 public class SaleRepository extends BaseRepository {
 
+    private static final int MAX_UNPAID_CREDIT_SALES = 2;
+
+
     public Integer findCustomerIdByPhone(String phone) {
-        String sql = "SELECT id FROM customer WHERE contact = ?";
+        String sql = "SELECT id FROM customer WHERE contact = ? AND is_active = TRUE";
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -54,6 +57,10 @@ public class SaleRepository extends BaseRepository {
 
             int paymentTypeId = getOrCreatePaymentTypeId(conn, paymentMode);
 
+            if ("credit".equalsIgnoreCase(paymentMode)){
+                checkCreditLimit(conn,customerId);
+            }
+
             int saleId = insertSale(conn, customerId, userId, totalPrice, paymentTypeId);
 
             insertSaleItems(conn, saleId, items);
@@ -82,6 +89,53 @@ public class SaleRepository extends BaseRepository {
                     closeEx.printStackTrace();
                 }
             }
+        }
+    }
+
+    private void checkCreditLimit(Connection conn, Integer customerId) throws SQLException{
+        String lockSql = "SELECT id FROM customer WHERE id = ? AND is_active = TRUE FOR UPDATE";
+        try(PreparedStatement ps = conn.prepareStatement(lockSql)) {
+            ps.setInt(1,customerId);
+            try(ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()){
+                    throw new SQLException("Customer Not Found OR Inactive");
+                }
+
+            }
+
+        }
+        String sql =
+                "SELECT COUNT(*) AS unpaid_count " +
+                        "FROM sale " +
+                        "JOIN payment_type ON sale.payment_type_id = payment_type.id " +
+                        "WHERE sale.cus_id = ? " +
+                        "AND payment_type.mode = 'Credit' " +
+                        "AND sale.credit_settled = FALSE";
+
+        try(PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setInt(1,customerId);
+            try (ResultSet rs = ps.executeQuery()){
+                if (rs.next()&&rs.getInt("unpaid_count")>=MAX_UNPAID_CREDIT_SALES){
+                    throw new SQLException("Customer has reached the Maximum limit of 2 unpaid credit sales");
+                }
+
+            }
+        }
+    }
+
+    public boolean markCreditSaleAsSettled(int saleId){
+        String sql = "UPDATE sale SET credit_settled = TRUE" +
+                "WHERE s_id=?" +
+                "AND credit_settled = FALSE" +
+                "AND payment_type_id=(" +
+                "SELECT id FROM payment_type WHERE mode = 'Credit'";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setInt(1,saleId);
+            return ps.executeUpdate()>0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to settle credit sale",e);
         }
     }
 
@@ -181,7 +235,7 @@ public class SaleRepository extends BaseRepository {
 
         String sql =
                 "SELECT s.s_id, s.date, pt.mode AS payment_mode, " +
-                        "s.total_price, " +
+                        "s.total_price, s.credit_settled, " +
                         "COALESCE(STRING_AGG(" +
                         "p.name || ' x ' || si.qty::TEXT, ', ' ORDER BY p.name" +
                         "), 'No items') AS purchased_items " +
@@ -190,7 +244,7 @@ public class SaleRepository extends BaseRepository {
                         "LEFT JOIN sale_item si ON s.s_id = si.s_id " +
                         "LEFT JOIN product p ON si.p_id = p.id " +
                         "WHERE s.cus_id = ? " +
-                        "GROUP BY s.s_id, s.date, pt.mode, s.total_price " +
+                        "GROUP BY s.s_id, s.date, pt.mode, s.total_price, s.credit_settled " +
                         "ORDER BY s.date DESC";
 
         try (Connection conn = getConnection();
@@ -214,6 +268,7 @@ public class SaleRepository extends BaseRepository {
                                     .paymentMode(rs.getString("payment_mode"))
                                     .totalPrice(rs.getBigDecimal("total_price"))
                                     .purchasedItems(rs.getString("purchased_items"))
+                                    .creditSettled(rs.getBoolean("credit_settled"))
                                     .build()
                     );
                 }

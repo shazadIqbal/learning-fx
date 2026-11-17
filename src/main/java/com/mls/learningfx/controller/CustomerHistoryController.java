@@ -4,18 +4,29 @@ import com.mls.learningfx.model.Customer;
 import com.mls.learningfx.model.CustomerSaleHistory;
 import com.mls.learningfx.service.SaleService;
 
+import com.mls.learningfx.util.NavigationUtil;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+import com.mls.learningfx.util.NavigationUtil;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
+import java.io.IOException;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TableCell;
 
 public class CustomerHistoryController {
-
     @FXML
     private Label customerNameLabel;
 
@@ -49,7 +60,12 @@ public class CustomerHistoryController {
     @FXML
     private TableColumn<CustomerSaleHistory, BigDecimal> totalColumn;
 
+    @FXML
+    private Button backButton;
+
     private final SaleService saleService = new SaleService();
+
+    private Integer currentCustomerId;
 
     @FXML
     public void initialize() {
@@ -73,6 +89,64 @@ public class CustomerHistoryController {
         totalColumn.setCellValueFactory(
                 new PropertyValueFactory<>("totalPrice")
         );
+
+        TableColumn<CustomerSaleHistory, Void> actionColumn =
+                new TableColumn<>("Action");
+
+        actionColumn.setCellFactory(column -> new TableCell<>() {
+
+            private final Button paidButton = new Button("Mark as Paid");
+
+            {
+                paidButton.setOnAction(event -> {
+                    CustomerSaleHistory sale =
+                            getTableView().getItems().get(getIndex());
+
+                    try {
+                        boolean updated = saleService.markCreditSaleAsSettled(
+                                sale.getSaleId()
+                        );
+
+                        if (updated) {
+                            loadHistory(currentCustomerId);
+                        }
+
+                    } catch (RuntimeException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Settlement Error");
+                        alert.setHeaderText("Unable to settle credit sale");
+                        alert.setContentText(e.getMessage());
+                        alert.showAndWait();
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    CustomerSaleHistory sale =
+                            getTableView().getItems().get(getIndex());
+
+                    boolean isCredit =
+                            "Credit".equalsIgnoreCase(sale.getPaymentMode());
+
+                    boolean isSettled =
+                            Boolean.TRUE.equals(sale.getCreditSettled());
+
+                    if (isCredit && !isSettled) {
+                        setGraphic(paidButton);
+                    } else {
+                        setGraphic(null);
+                    }
+                }
+            }
+        });
+
+        historyTable.getColumns().add(actionColumn);
     }
 
     // LOAD SELECTED CUSTOMER HISTORY
@@ -87,6 +161,8 @@ public class CustomerHistoryController {
         customerContactLabel.setText(
                 "Contact: " + customer.getContact()
         );
+
+        currentCustomerId = customer.getId();
 
         loadHistory(customer.getId());
     }
@@ -117,6 +193,20 @@ public class CustomerHistoryController {
             historyTable.setPlaceholder(
                     new Label("No purchase history available.")
             );
+        }
+    }
+    @FXML
+    private void backToCustomers() {
+
+        Stage stage = (Stage)
+                backButton.getScene().getWindow();
+        try {
+            NavigationUtil.navigate(
+                    stage,
+                    NavigationUtil.CUSTOMER_VIEW
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
