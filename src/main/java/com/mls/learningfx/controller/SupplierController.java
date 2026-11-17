@@ -4,6 +4,7 @@ package com.mls.learningfx.controller;
 import com.mls.learningfx.model.Supplier;
 import com.mls.learningfx.model.SupplierType;
 import com.mls.learningfx.service.SupplierService;
+import com.mls.learningfx.service.UserService;
 import com.mls.learningfx.util.NavigationUtil;
 
 import javafx.collections.FXCollections;
@@ -46,6 +47,9 @@ public class SupplierController {
     @FXML
     private Label statusLabel;
 
+    @FXML
+    private Button addSupplierButton;
+
     private final SupplierService supplierService =
             new SupplierService();
 
@@ -84,6 +88,12 @@ public class SupplierController {
         getAllSupplier();
 
         deleteSupplier();
+
+        // only admin can add, edit and delete
+        if (!UserService.isAdmin()) {
+            addSupplierButton.setVisible(false);
+            actionColumn.setVisible(false);
+        }
     }
 
 
