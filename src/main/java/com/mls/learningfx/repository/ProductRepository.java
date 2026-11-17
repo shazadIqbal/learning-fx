@@ -1,9 +1,9 @@
-
 package com.mls.learningfx.repository;
 
 import com.mls.learningfx.model.Product;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,18 +24,33 @@ public class ProductRepository extends BaseRepository {
         return loadProducts(sql, null);
     }
 
+    public List<Product> getProductsWithExpiry() {
+        String sql = "SELECT p.*, c.name AS category_name, " +
+                "u.name AS created_by_name, " +
+                "(SELECT SUM(qty) FROM stock WHERE stock.product_id = p.id) AS quantity " +
+                "FROM product p " +
+                "LEFT JOIN product_category c ON p.category_id = c.id " +
+                "LEFT JOIN users u ON p.created_by = u.id " +
+                "WHERE p.is_active = TRUE AND p.expiry_date IS NOT NULL " +
+                "ORDER BY p.expiry_date ASC";
+
+        return loadProducts(sql, null);
+    }
+
     // save product and get its id
     public Integer addProduct(String name, Integer categoryId,
                               Double price, Double sellPrice,
-                              Integer createdBy, String barcode) {
+                              Integer createdBy, String barcode,
+                              LocalDate expiryDate) {
 
         String sql = "INSERT INTO product " +
-                "(name, category_id, price, sell_price, created_by, barcode) " +
-                "VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
+                "(name, category_id, price, sell_price, created_by, barcode, expiry_date) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id";
 
         try (Connection conn = getConnection();
              ResultSet rs = executeQuery(conn, sql, name, categoryId,
-                     price, sellPrice, createdBy, barcode)) {
+                     price, sellPrice, createdBy, barcode,
+                     expiryDate != null ? Date.valueOf(expiryDate) : null)) {
 
             if (rs.next()) {
                 return rs.getInt("id");
@@ -50,14 +65,16 @@ public class ProductRepository extends BaseRepository {
 
     public boolean updateProduct(int id, String name,
                                  Integer categoryId, Double price,
-                                 Double sellPrice, String barcode) {
+                                 Double sellPrice, String barcode,
+                                 LocalDate expiryDate) {
 
         String sql = "UPDATE product SET name = ?, " +
                 "category_id = ?, price = ?, sell_price = ?, " +
-                "barcode = ? WHERE id = ?";
+                "barcode = ?, expiry_date = ? WHERE id = ?";
 
         int rows = executeUpdate(sql, name, categoryId,
-                price, sellPrice, barcode, id);
+                price, sellPrice, barcode,
+                expiryDate != null ? Date.valueOf(expiryDate) : null, id);
 
         return rows > 0;
     }
@@ -125,6 +142,8 @@ public class ProductRepository extends BaseRepository {
 
                 while (rs.next()) {
 
+                    Date expirySqlDate = rs.getDate("expiry_date");
+
                     Product product = Product.builder()
                             .id(rs.getInt("id"))
                             .name(rs.getString("name"))
@@ -136,6 +155,7 @@ public class ProductRepository extends BaseRepository {
                             .createdByName(rs.getString("created_by_name"))
                             .quantity(rs.getInt("quantity"))
                             .barcode(rs.getString("barcode"))
+                            .expiryDate(expirySqlDate != null ? expirySqlDate.toLocalDate() : null)
                             .build();
 
                     list.add(product);

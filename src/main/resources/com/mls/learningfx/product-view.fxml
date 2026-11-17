@@ -109,6 +109,10 @@
                              prefWidth="55.0"
                              text="Stock" />
 
+                <TableColumn fx:id="expiryColumn"
+                             prefWidth="95.0"
+                             text="Expiry Date" />
+
                 <TableColumn fx:id="createdByColumn"
                              prefWidth="95.0"
                              text="Created By" />
@@ -125,3 +129,4 @@
     </children>
 
 </VBox>
+
