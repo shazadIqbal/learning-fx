@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane prefHeight="660.0" prefWidth="900.0" style="-fx-background-color: #f3f6fb;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mls.learningfx.controller.DashboardController">
     <top>
@@ -31,16 +32,17 @@
         </HBox>
     </top>
     <center>
-        <GridPane alignment="CENTER" hgap="20.0" vgap="20.0">
-            <padding><Insets bottom="40.0" left="44.0" right="44.0" top="34.0" /></padding>
+        <GridPane alignment="CENTER" hgap="20.0" prefHeight="637.0" prefWidth="920.0" vgap="20.0">
+            <padding><Insets bottom="50.0" left="50.0" right="50.0" top="50.0" /></padding>
             <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" minWidth="190.0" percentWidth="33.33" />
-                <ColumnConstraints hgrow="ALWAYS" minWidth="190.0" percentWidth="33.33" />
-                <ColumnConstraints hgrow="ALWAYS" minWidth="190.0" percentWidth="33.34" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="190.0" percentWidth="32.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="190.0" percentWidth="34.67" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="170.0" percentHeight="50.0" vgrow="ALWAYS" />
                 <RowConstraints minHeight="170.0" percentHeight="50.0" vgrow="ALWAYS" />
+            <RowConstraints minHeight="170.0" percentHeight="50.0" vgrow="ALWAYS" />
             </rowConstraints>
             <children>
                 <Button fx:id="productBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#productView" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Products">
@@ -58,10 +60,36 @@
                 <Button fx:id="reportBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#reportView" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Reports" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <graphic><ImageView fitHeight="48.0" fitWidth="52.0" preserveRatio="true"><image><Image url="@icon/report.png" /></image></ImageView></graphic>
                 </Button>
-                <Button fx:id="logoutBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#logout" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Sign Out" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <Button fx:id="logoutBtn" contentDisplay="TOP" graphicTextGap="16.0" maxHeight="Infinity" maxWidth="Infinity" onAction="#logout" style="-fx-background-color: white; -fx-border-color: #dce4ef; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #24324a; -fx-cursor: hand;" text="Sign Out" GridPane.rowIndex="2">
                     <graphic><ImageView fitHeight="44.0" fitWidth="48.0" preserveRatio="true"><image><Image url="@icon/logout.png" /></image></ImageView></graphic>
                 </Button>
+            <HBox prefHeight="182.0" prefWidth="282.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <children>
+                  <Button fx:id="expenseButton" alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" mnemonicParsing="false" onAction="#expenseView" prefHeight="187.0" prefWidth="283.0" text="Expenses" wrapText="true">
+                     <font>
+                        <Font name="System Bold Italic" size="20.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            <ImageView fitHeight="81.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <image>
+                  <Image url="@../../../../../../../../Downloads/expenses-signing-report-icon-vector-27397264.jpg" />
+               </image>
+            </ImageView>
             </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
         </GridPane>
     </center>
 </BorderPane>

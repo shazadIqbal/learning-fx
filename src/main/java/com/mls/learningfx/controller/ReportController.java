@@ -16,13 +16,13 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
+
 
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 
@@ -201,78 +201,75 @@ public class ReportController {
     private final MonthlyReportService monthlyReportService = new MonthlyReportService();
 
     // ---------- 1. Button dabane par yeh chalta hai ----------
+    // ---------- 1. Button dabane par yeh chalta hai ----------
     @FXML
     private void downloadMonthlyReport() {
 
-        // Pehle dialog dikhao, aur user se mahine pucho
-        ComboBox<YearMonth> fromBox = createMonthBox();
-        ComboBox<YearMonth> toBox = createMonthBox();
+        // Date picker wala dialog dikhao
+        Optional<LocalDate[]> result = showReportDialog();
 
-        boolean okPressed = showMonthDialog(fromBox, toBox);
-        if (!okPressed) {
+        if (result.isEmpty()) {
             return;   // user ne Cancel dabaya
         }
 
-        YearMonth from = fromBox.getValue();
-        YearMonth to = toBox.getValue();
+        LocalDate[] dates = result.get();
+
+        // Date se month nikalo
+        YearMonth from = YearMonth.from(dates[0]);
+        YearMonth to = YearMonth.from(dates[1]);
 
         // Phir report banao
         generateReport(from, to);
     }
 
-    // ---------- 2. Mahine ki dropdown banao ----------
-    private ComboBox<YearMonth> createMonthBox() {
+    // ---------- 2. Date picker wala dialog ----------
+    private Optional<LocalDate[]> showReportDialog() {
 
-        ComboBox<YearMonth> box = new ComboBox<>();
-        YearMonth now = YearMonth.now();
+        Dialog<LocalDate[]> dialog = new Dialog<>();
+        dialog.setTitle("Monthly Report");
+        dialog.setHeaderText("(From which date to which date?)");
 
-        // Pichle 24 mahine, naya mahina sab se upar
-        for (int i = 0; i < 24; i++) {
-            box.getItems().add(now.minusMonths(i));
-        }
+        ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
 
-        // "2026-11" ki jagah "Nov 2026" dikhao
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM yyyy");
-        box.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(YearMonth month) {
-                if (month == null) {
-                    return "";
-                }
-                return month.format(format);
-            }
-
-            @Override
-            public YearMonth fromString(String text) {
-                return null;
-            }
-        });
-
-        // Shuru mein is mahine ko select rakho
-        box.setValue(now);
-        return box;
-    }
-
-    // ---------- 3. Dialog dikhao, OK dabane par true wapas do ----------
-    private boolean showMonthDialog(ComboBox<YearMonth> fromBox, ComboBox<YearMonth> toBox) {
+        DatePicker fromPicker = new DatePicker(LocalDate.now().withDayOfMonth(1));
+        DatePicker toPicker = new DatePicker(LocalDate.now());
 
         GridPane grid = new GridPane();
-        grid.setHgap(12);
-        grid.setVgap(12);
-        grid.addRow(0, new Label("Start month"), fromBox);
-        grid.addRow(1, new Label("End month"), toBox);
+        grid.setHgap(10);
+        grid.setVgap(15);
+        grid.add(new Label("Start date"), 0, 0);
+        grid.add(fromPicker, 1, 0);
+        grid.add(new Label("End date"), 0, 1);
+        grid.add(toPicker, 1, 1);
 
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Monthly Report");
-        dialog.setHeaderText("Kis mahine se kis mahine tak report chahiye?");
         dialog.getDialogPane().setContent(grid);
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        Optional<ButtonType> choice = dialog.showAndWait();
-        return choice.isPresent() && choice.get() == ButtonType.OK;
+        // Galat input ho to dialog band na ho
+        dialog.getDialogPane().lookupButton(okButton).addEventFilter(
+                javafx.event.ActionEvent.ACTION, event -> {
+                    LocalDate start = fromPicker.getValue();
+                    LocalDate end = toPicker.getValue();
+
+                    if (start == null || end == null) {
+                        new Alert(Alert.AlertType.ERROR, "Dono date chunein!").show();
+                        event.consume();
+                    } else if (start.isAfter(end)) {
+                        new Alert(Alert.AlertType.ERROR,
+                                "Start date, End date se pehle honi chahiye!").show();
+                        event.consume();
+                    }
+                });
+
+        dialog.setResultConverter(button -> {
+            if (button == okButton) {
+                return new LocalDate[]{fromPicker.getValue(), toPicker.getValue()};
+            }
+            return null;
+        });
+
+        return dialog.showAndWait();
     }
-
-    // ---------- 4. Background mein report banao ----------
     private void generateReport(YearMonth from, YearMonth to) {
 
         // Task = background kaam, taake app freeze na ho

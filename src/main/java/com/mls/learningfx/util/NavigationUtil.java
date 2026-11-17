@@ -18,6 +18,7 @@ public class NavigationUtil {
     public static final String REPORT_VIEW = "REPORT_VIEW";
     public static final String LOGIN ="LOGIN";
     public static final String CUSTOMER_VIEW = "CUSTOMER_VIEW";
+    public static final String EXPENSE_VIEW = "EXPENSE_VIEW";
 
     public static void navigate(Stage stage,String action) throws IOException {
 
@@ -45,6 +46,12 @@ public class NavigationUtil {
             case CUSTOMER_VIEW:
                 loadView(stage, "customer-view.fxml");
                 break;
+
+            case EXPENSE_VIEW:
+                loadView(stage, "expense-view.fxml");
+                break;
+
+
         }
     }
 

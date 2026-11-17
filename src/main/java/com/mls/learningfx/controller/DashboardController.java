@@ -21,8 +21,12 @@ public class DashboardController {
 
     @FXML
     private Button logoutBtn;
+
     @FXML
     private Button customerBtn;
+
+    @FXML
+    private Button expenseButton;
 
     @FXML
     public void productView(){
@@ -32,8 +36,8 @@ public class DashboardController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
+
     @FXML
     public void supplierView(){
         Stage stage = (Stage) supplierBtn.getScene().getWindow();
@@ -42,7 +46,6 @@ public class DashboardController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @FXML
@@ -74,8 +77,8 @@ public class DashboardController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
+
 
 
    @FXML
@@ -87,6 +90,16 @@ public class DashboardController {
        } catch (IOException e) {
            throw new RuntimeException(e);
        }
-
    }
+    @FXML
+    public void expenseView() {
+
+        Stage stage = (Stage) expenseButton.getScene().getWindow();
+
+        try {
+            NavigationUtil.navigate(stage, NavigationUtil.EXPENSE_VIEW);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
