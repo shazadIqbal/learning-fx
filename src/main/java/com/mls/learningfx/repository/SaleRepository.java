@@ -124,7 +124,7 @@ public class SaleRepository extends BaseRepository {
     }
 
     public boolean markCreditSaleAsSettled(int saleId){
-        String sql = "UPDATE sale SET credit_settled = TURE" +
+        String sql = "UPDATE sale SET credit_settled = TRUE" +
                 "WHERE s_id=?" +
                 "AND credit_settled = FALSE" +
                 "AND payment_type_id=(" +
